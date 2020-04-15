@@ -30,13 +30,11 @@ final class NetworkingService {
         case delete = "DELETE"
     }
 
-    private let defaultHeaders = ["Content-Type":"application/json"]
-
-    func dispatchRequest<T:Encodable>(urlString: String,
-                          method: HTTPMethod,
-                          additionalHeaders:[String: String]? = nil,
-                          body: T? = nil,
-                          completion: @escaping (Result<Data, NetworkError>) -> Void) {
+    func dispatchRequest(urlString: String,
+                        method: HTTPMethod,
+                        additionalHeaders:[String: String]? = nil,
+                        body: Encodable? = nil,
+                        completion: @escaping (Result<Data, NetworkError>) -> Void) {
 
         /// Create a url instance with URL class, using the string provided. Completion handler gets failure in case
         guard let url = URL(string: urlString) else {
@@ -47,17 +45,15 @@ final class NetworkingService {
         /// Create an URL Request to be used with dataTast of URL Session. Designate HTTP Method as GET
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
-        urlRequest.allHTTPHeaderFields = defaultHeaders.merged(with: additionalHeaders ?? [:])
-
+        urlRequest.allHTTPHeaderFields = additionalHeaders
 
         /// Encode body and add to urlRequest if not nil
         if let body = body {
-            let encoder = JSONEncoder()
-            let data = try? encoder.encode(body)
-            if let data = data {
+            if let data = body.toJSONData() {
                 urlRequest.httpBody = data
             } else {
                 completion(.failure(.invalidBody))
+                return
             }
         }
 
@@ -90,6 +86,12 @@ final class NetworkingService {
                 completion(.failure(.noResponse))
             }
         }.resume()
+    }
+}
+
+private extension Encodable {
+    func toJSONData() -> Data? {
+        return try? JSONEncoder().encode(self)
     }
 }
 
