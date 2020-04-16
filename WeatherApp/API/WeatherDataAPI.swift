@@ -10,29 +10,6 @@ import Foundation
 
 struct WeatherDataAPI {
 
-    struct WeatherData: Decodable {
-        let dt: Double
-        let name: String
-        let main: Main
-        let weather: [Weather]
-//        let wind: Wind
-    }
-
-    struct Main: Decodable {
-        let temp: Double
-    }
-
-    struct Weather: Decodable {
-        let id: Int
-    //    let main: String
-        let description: String
-    }
-
-//    struct Wind: Decodable {
-//        let speed: Double
-//        let deg: Int
-//    }
-
     private let networkingService = NetworkingService()
     private let weatherURL = "https://samples.openweathermap.org/data/2.5/weather?id=2172797&appid=439d4b804bc8187953eb36d2a8c26a02"
 
