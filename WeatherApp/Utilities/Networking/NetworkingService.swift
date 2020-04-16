@@ -74,7 +74,11 @@ final class NetworkingService {
             if let httpResponse = response as? HTTPURLResponse {
                 switch httpResponse.statusCode {
                 case 200...209:
-                    completion(.success(data))
+
+                    DispatchQueue.main.async {
+                        completion(.success(data))
+                    }
+
                 case 400...499:
                     completion(.failure(.unauthorized))
                 case 500...599:
