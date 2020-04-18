@@ -7,14 +7,27 @@
 //
 
 import Foundation
+import CoreLocation
+
+private let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&q="
+private let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&q="
 
 struct WeatherDataAPI {
 
     private let networkingService = NetworkingService()
-    private let weatherURL = "https://samples.openweathermap.org/data/2.5/weather?id=2172797&appid=439d4b804bc8187953eb36d2a8c26a02"
 
-    func getWeatherInfo(completion: @escaping (Result<WeatherData, Error>) -> Void) {
-        networkingService.dispatchRequest(urlString: weatherURL, method: .get) { result in
+    func getCurrentWeatherInfo(by locationInformation: LocationInformation, with completion: @escaping (Result<WeatherData, Error>) -> Void) {
+
+        var url = ""
+
+        switch locationInformation {
+        case .cityName(let cityName):
+            url = "\(weatherURL)\(cityName)"
+        case .coordinates(let location):
+            url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        }
+
+        networkingService.dispatchRequest(urlString: url, method: .get) { result in
             switch result {
             case .success(let data):
                 do {
@@ -38,6 +51,11 @@ struct WeatherDataAPI {
 
 //MARK: - Weather Data Decodable
 extension WeatherDataAPI {
+
+    enum LocationInformation {
+        case coordinates(CLLocation)
+        case cityName(String)
+    }
 
     struct WeatherData: Decodable {
         let coord: Coord
@@ -67,5 +85,24 @@ extension WeatherDataAPI {
         let lon: Double
         let lat: Double
     }
-
 }
+
+//        func fetchWeatherInfoByCityName(_ cityName: String) {
+//            let url = "\(weatherURL)\(cityName)"
+//            performRequest(with: url, for: .weatherData)
+//        }
+//
+//        func fetchWeatherInfoByLocation(_ location: CLLocation) {
+//            let url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+//            performRequest(with: url, for: .weatherData)
+//        }
+//
+//        func fetchForeastInfoByCityName(_ cityName: String) {
+//            let url = "\(forecastURL)\(cityName)"
+//            performRequest(with: url, for: .forecastData)
+//        }
+//
+//        func fetchForecastInfoByLocation(_ location: CLLocation) {
+//            let url = "\(forecastURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+//            performRequest(with: url, for: .forecastData)
+//        }
