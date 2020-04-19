@@ -61,6 +61,7 @@ extension WeatherDataAPI {
         let coord: Coord
         let dt: Double
         let name: String
+        let id: Int
         let main: Main
         let weather: [Weather]
         let wind: Wind

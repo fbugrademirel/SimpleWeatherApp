@@ -11,9 +11,11 @@ import CoreLocation
 
 class WelcomeViewController: UIViewController {
 
+    @IBOutlet private var textField: UITextField!
     var viewModel: WelcomeViewModel!
     let weatherRepo = WeatherRepository.shared
-    let cityRepo = CityListRepository()
+    let cityRepo = CityListRepository.shared
+
 
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var cityName: UILabel!
@@ -21,13 +23,21 @@ class WelcomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-   //     print(cityRepo.cityList[0].name)
-
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        refreshWeather()
-
+        //refreshWeather()
     }
+
+    @IBAction func searchPressed(_ sender: UIButton) {
+        if let text = textField.text {
+            cityRepo.getCityInfo(by: text) { [weak self] (data) in
+                guard let _ = self else {return}
+                DispatchQueue.main.async {
+                    print(data)
+                }
+            }
+        }
+    }
+    
     @IBAction func refreshPressed(_ sender: UIButton) {
         refreshWeather()
     }
@@ -64,4 +74,5 @@ extension WelcomeViewController: StoryboardInstantiable {
         return viewController
     }
 }
+
 

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Coord" representedClassName="Coord" syncable="YES" codeGenerationType="class">
+    <entity name="CityCoord" representedClassName="CityCoord" syncable="YES" codeGenerationType="class">
         <attribute name="lat" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="lon" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <relationship name="parent" maxCount="1" deletionRule="Nullify" destinationEntity="WeatherData" inverseName="coord" inverseEntity="WeatherData"/>
+        <relationship name="parentCity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CityListItem" inverseName="coord" inverseEntity="CityListItem"/>
+    </entity>
+    <entity name="CityListItem" representedClassName="CityListItem" syncable="YES" codeGenerationType="class">
+        <attribute name="country" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" customClassName="."/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="coord" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CityCoord" inverseName="parentCity" inverseEntity="CityCoord"/>
     </entity>
     <entity name="Main" representedClassName="Main" syncable="YES" codeGenerationType="class">
         <attribute name="temp" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -18,7 +24,6 @@
     <entity name="WeatherData" representedClassName="WeatherData" syncable="YES" codeGenerationType="class">
         <attribute name="dt" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
-        <relationship name="coord" maxCount="1" deletionRule="Nullify" destinationEntity="Coord" inverseName="parent" inverseEntity="Coord"/>
         <relationship name="main" maxCount="1" deletionRule="Nullify" destinationEntity="Main" inverseName="parent" inverseEntity="Main"/>
         <relationship name="weather" maxCount="1" deletionRule="Nullify" destinationEntity="Weather" inverseName="parent" inverseEntity="Weather"/>
         <relationship name="wind" maxCount="1" deletionRule="Nullify" destinationEntity="Wind" inverseName="parent" inverseEntity="Wind"/>
@@ -29,10 +34,11 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WeatherData" inverseName="wind" inverseEntity="WeatherData"/>
     </entity>
     <elements>
-        <element name="Coord" positionX="-118.80859375" positionY="-242.6796875" width="128" height="88"/>
+        <element name="CityCoord" positionX="17.53515625" positionY="-475.97265625" width="128" height="88"/>
+        <element name="CityListItem" positionX="-375.59375" positionY="-389.625" width="128" height="103"/>
         <element name="Main" positionX="-123.17578125" positionY="-42.4453125" width="128" height="73"/>
         <element name="Weather" positionX="-121.73046875" positionY="42.2578125" width="128" height="103"/>
-        <element name="WeatherData" positionX="-382.19921875" positionY="-280.92578125" width="128" height="133"/>
+        <element name="WeatherData" positionX="-300.88671875" positionY="-246.44921875" width="128" height="118"/>
         <element name="Wind" positionX="-119.4921875" positionY="-144.5625" width="128" height="88"/>
     </elements>
 </model>

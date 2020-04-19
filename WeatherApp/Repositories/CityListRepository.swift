@@ -8,36 +8,87 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 final class CityListRepository {
 
-    var cityList = [ListItem]()
-
+    /// Initializer reads and saves the json file to coredata if the core data is empty.
     init() {
-        if let path = Bundle.main.path(forResource: "city.list", ofType: "json") {
+        var isEmpty: Bool {
             do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-                let decodedData = try JSONDecoder().decode(CityList.self, from: data)
-                for each in decodedData.list {
-                    let coord = Coord(lon: each.coord.lon, lat: each.coord.lat)
-                    cityList.append(ListItem(id: each.id, name: each.name, country: each.country, coord: coord))
-                }
+                let request = NSFetchRequest<CityListItem>(entityName: "CityListItem")
+                let count = try context.count(for: request)
+                return count == 0
             } catch {
-                print("Json file could not be read: \(error.localizedDescription)")
+                return true
             }
+        }
+        print(isEmpty)
+        if isEmpty {
+            print("initializing city repo")
+            if let path = Bundle.main.path(forResource: "citylist", ofType: "json") {
+                do {
+                    let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                    print("Starting to read json")
+                    let decodedData = try JSONDecoder().decode([City].self, from: data)
+                    print("finished reading json")
+                    for each in decodedData {
+                        let coord = Coord(lon: each.coord.lon, lat: each.coord.lat)
+                        //parse to core data classes
+                        let city = CityListItem(context: context)
+                        city.name = each.name
+                        city.id = Int64(each.id)
+                        city.country = each.country
+
+                        city.coord = CityCoord(context: context)
+                        city.coord?.lat = coord.lat
+                        city.coord?.lon = coord.lon
+                    }
+                    print("starting to save to core data")
+                      try context.save()
+                    print("finished saving to core data")
+                } catch {
+                    print("Json file could not be read: \(error.localizedDescription)")
+                }
+            }
+        }
+        print("ending init of city repo")
+    }
+
+    static let shared = CityListRepository()
+
+    func getCityInfo(by string: String, completion: @escaping ([CityListRepository.City]) -> Void ) {
+
+        let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+        let predicate = NSPredicate(format: "name BEGINSWITH[cd] %@", string)
+        request.predicate = predicate
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+        request.fetchLimit = 10
+        do {
+           let cities = try context.fetch(request)
+            print(cities)
+            var cityData = [CityListRepository.City]()
+            for city in cities {
+                guard let name = city.name, let country = city.country, let lon = city.coord?.lon, let lat = city.coord?.lat else {
+                    completion(cityData)
+                    return
+                }
+                cityData.append(CityListRepository.City(id: Int(city.id), name: name, country: country, coord: Coord(lon: lon, lat: lat)))
+            }
+            completion(cityData)
+        } catch {
+            print(error.localizedDescription)
+            completion([])
         }
     }
 }
 
 extension CityListRepository {
 
-    struct CityList: Decodable {
-        let list: [ListItem]
-    }
-
-    struct ListItem: Decodable {
+    struct City: Decodable {
         let id: Int
         let name: String
         let country: String
@@ -48,14 +99,5 @@ extension CityListRepository {
         let lon: Double
         let lat: Double
     }
-
 }
 
-//"id": 5174,
-//"name": "‘Arīqah",
-//"state": "",
-//"country": "SY",
-//"coord": {
-//  "lon": 36.48336,
-//  "lat": 32.889809
-//}

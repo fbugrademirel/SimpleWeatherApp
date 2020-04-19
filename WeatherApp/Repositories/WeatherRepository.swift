@@ -22,6 +22,7 @@ final class WeatherRepository {
 
     func getCurrentWeatherInfo(by locationInformation: LocationInformation, completion: @escaping (WeatherDataAPI.WeatherData?) -> Void) {
 
+        //TODO: FIX searching the array by city name by city name
         var isOutOfDate: Bool = false
 
         switch locationInformation {
