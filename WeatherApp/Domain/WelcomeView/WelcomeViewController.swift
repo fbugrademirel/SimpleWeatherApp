@@ -11,12 +11,11 @@ import CoreLocation
 
 class WelcomeViewController: UIViewController {
 
-    @IBOutlet private var textField: UITextField!
     var viewModel: WelcomeViewModel!
     let weatherRepo = WeatherRepository.shared
     let cityRepo = CityListRepository.shared
 
-
+    @IBOutlet private var textField: UITextField!
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var cityName: UILabel!
 
@@ -30,20 +29,21 @@ class WelcomeViewController: UIViewController {
     @IBAction func searchPressed(_ sender: UIButton) {
         if let text = textField.text {
             cityRepo.getCityInfo(by: text) { [weak self] (data) in
-                guard let _ = self else {return}
+                guard let self = self else {return}
+                print(data[0])
                 DispatchQueue.main.async {
-                    print(data)
+                    self.refreshWeather(by: data[0].id)
                 }
             }
         }
     }
     
     @IBAction func refreshPressed(_ sender: UIButton) {
-        refreshWeather()
+//        refreshWeather()
     }
 
-    func refreshWeather() {
-        weatherRepo.getCurrentWeatherInfo(by:.cityName("Trabzon")) { [weak self] (data) in
+    func refreshWeather(by id: Int) {
+        weatherRepo.getCurrentWeatherInfo(with:.id(id)) { [weak self] (data) in
             guard let self = self else { return }
             self.view.backgroundColor = #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1)
             if let data = data {

@@ -25,7 +25,6 @@ final class CityListRepository {
                 return true
             }
         }
-        print(isEmpty)
         if isEmpty {
             print("initializing city repo")
             if let path = Bundle.main.path(forResource: "citylist", ofType: "json") {
@@ -68,8 +67,7 @@ final class CityListRepository {
         request.sortDescriptors = [sortDescriptor]
         request.fetchLimit = 10
         do {
-           let cities = try context.fetch(request)
-            print(cities)
+            let cities = try context.fetch(request)
             var cityData = [CityListRepository.City]()
             for city in cities {
                 guard let name = city.name, let country = city.country, let lon = city.coord?.lon, let lat = city.coord?.lat else {
@@ -80,7 +78,7 @@ final class CityListRepository {
             }
             completion(cityData)
         } catch {
-            print(error.localizedDescription)
+            print("Error getting city info from core data \(error.localizedDescription)")
             completion([])
         }
     }
