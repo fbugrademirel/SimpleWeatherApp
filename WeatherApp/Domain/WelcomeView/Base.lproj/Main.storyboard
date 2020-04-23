@@ -14,59 +14,9 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gn4-1T-JSP">
-                                <rect key="frame" x="190.5" y="442.5" width="33.5" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i9Z-tm-xXH">
-                                <rect key="frame" x="183" y="638" width="49" height="30"/>
-                                <state key="normal" title="refresh"/>
-                                <connections>
-                                    <action selector="refreshPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oMf-Wn-hcT"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="cityname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1wW-yF-yOX">
-                                <rect key="frame" x="172" y="379" width="70" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="search...." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Pso-Y4-lSI">
-                                <rect key="frame" x="239.5" y="138" width="87.5" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cyQ-gD-46a">
-                                <rect key="frame" x="260" y="180" width="47" height="30"/>
-                                <state key="normal" title="search"/>
-                                <connections>
-                                    <action selector="searchPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FzU-sw-gz1"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="cyQ-gD-46a" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="260" id="0Vz-fh-yLy"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Pso-Y4-lSI" secondAttribute="bottom" constant="690" id="1Kp-Qj-9Z3"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1wW-yF-yOX" secondAttribute="trailing" constant="172" id="2k1-BU-zZn"/>
-                            <constraint firstItem="Gn4-1T-JSP" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Fgp-iW-xMk"/>
-                            <constraint firstItem="cyQ-gD-46a" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="136" id="GPq-BT-y6T"/>
-                            <constraint firstItem="1wW-yF-yOX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="335" id="I1n-gT-3pw"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="i9Z-tm-xXH" secondAttribute="trailing" constant="182" id="cCZ-bu-oba"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Pso-Y4-lSI" secondAttribute="trailing" constant="87" id="e8X-3S-QzI"/>
-                            <constraint firstItem="Gn4-1T-JSP" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="nF5-pF-A71"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="i9Z-tm-xXH" secondAttribute="bottom" constant="194" id="qJO-Ow-mRp"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <connections>
-                        <outlet property="cityName" destination="1wW-yF-yOX" id="9is-p2-p8D"/>
-                        <outlet property="label" destination="Gn4-1T-JSP" id="K2K-d1-iyh"/>
-                        <outlet property="textField" destination="Pso-Y4-lSI" id="vpT-sd-dwC"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

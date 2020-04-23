@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-private let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&q="
+private let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&id="
 private let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&q="
 
 struct WeatherDataAPI {
@@ -21,8 +21,8 @@ struct WeatherDataAPI {
         var url = ""
 
         switch locationInformation {
-        case .cityName(let cityName):
-            url = "\(weatherURL)\(cityName)"
+        case .id(let id):
+            url = "\(weatherURL)\(String(id))"
         case .coordinates(let location):
             url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
         }
@@ -54,7 +54,7 @@ extension WeatherDataAPI {
 
     enum LocationInformation {
         case coordinates(CLLocation)
-        case cityName(String)
+        case id(Int)
     }
 
     struct WeatherData: Decodable {
