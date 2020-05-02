@@ -34,9 +34,21 @@ class WelcomeViewModel: NSObject {
 
     var didReceiveAction: ((Action)-> Void)? = nil
 
+    override init() {
+        super.init()
+//        locationManager.delegate = self
+//        locationManager.requestWhenInUseAuthorization()
+//        locationManager.requestLocation()
+    }
+
     func viewDidLoad() {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+    }
+
+
+    func weatherInfoRequired() {
         locationManager.requestLocation()
     }
 
@@ -97,14 +109,14 @@ extension WelcomeViewModel {
                 return "arrow.up"
             case 203 ... 247:
                 return "arrow.up.right"
-            case 258 ... 293:
+            case 248 ... 293:
                 return "arrow.right"
             case 294 ... 337:
                 return "arrow.down.right"
             case 338 ... 22:
                 return "arrow.down"
             default:
-                return "wind"
+                return "arrow.down"
             }
         }
         let temperatureDouble: Double
