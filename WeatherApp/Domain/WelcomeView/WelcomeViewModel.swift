@@ -49,6 +49,8 @@ class WelcomeViewModel: NSObject {
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
+                                                windSpeedDouble: data.wind.speed,
+                                                windDirectionInt: data.wind.deg,
                                                 temperatureDouble: data.main.temp)
             }
         }
@@ -78,6 +80,33 @@ extension WelcomeViewModel {
         let conditionID: Int
         let conditionDescription: String
         let cityName: String
+        let windSpeedDouble: Double
+        var windSpeedString: String {
+            return String(format: "%.0f", windSpeedDouble * 3.6) // in km/h
+        }
+        let windDirectionInt: Int
+        var windDirectionString: String {
+            switch windDirectionInt {
+            case 23 ... 68:
+                return "arrow.down.left"
+            case 69 ... 112:
+                return "arrow.left"
+            case 113 ... 157:
+                return "arrow.up.left"
+            case 158 ... 202:
+                return "arrow.up"
+            case 203 ... 247:
+                return "arrow.up.right"
+            case 258 ... 293:
+                return "arrow.right"
+            case 294 ... 337:
+                return "arrow.down.right"
+            case 338 ... 22:
+                return "arrow.down"
+            default:
+                return "wind"
+            }
+        }
         let temperatureDouble: Double
         var temperatureString: String {
             return String(format: "%.0f", temperatureDouble)
