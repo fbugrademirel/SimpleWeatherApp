@@ -24,7 +24,6 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
     var viewModel: WelcomeViewModel!
 
     //MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -34,48 +33,60 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
         viewModel.viewDidLoad()
     }
 
+    //MARK: - IBAction
+    @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
+        viewModel.weatherInfoByLocationRequired()
+    }
+
+    @IBAction func searchBarButtonItemPressed(_ sender: UIBarButtonItem) {
+        viewModel.citySearchRequired()
+    }
+
+    
+
+    //MARK: - Operations
     private func handle(action: WelcomeViewModel.Action) {
         switch action {
-        case .updateLabels(weatherInfo: let info):
-            updateLabels(with: info)
+        case .updateUI(weatherInfo: let info):
+           updateUI(with: info)
+        case .presentSearchView(viewModel: let viewModel):
+            presentSearchView(with: viewModel)
         }
+    }
+
+    private func updateUI(with info: WelcomeViewModel.WeatherModel) {
+        DispatchQueue.main.async {
+           UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+               self.stackView.alpha = 0
+           }) { _ in
+               self.updateLabels(with: info)
+               UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+                   self.stackView.alpha = 1
+               }, completion: nil)
+           }
+       }
+    }
+
+    private func presentSearchView(with viewModel: SearchViewModel) {
+        let vc = SearchViewController.instantiate(with: viewModel)
+        present(vc, animated: true, completion: nil)
     }
 
     private func updateLabels(with info: WelcomeViewModel.WeatherModel) {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-                self.stackView.alpha = 0
-            }) { _ in
-                self.updateUI(info: info)
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-                    self.stackView.alpha = 1
-                }, completion: nil)
-            }
-        }
+       self.cityNameLabel.text = info.cityName
+       let dateFormatter = DateFormatter()
+       dateFormatter.locale = NSLocale.current
+       dateFormatter.dateFormat = "dd-MMM HH:mm"
+       self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
+       self.temperatureLabel.text = info.temperatureString
+       self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
+       self.weatherDescriptionLabel.text = info.conditionDescription
+       self.windSpeed.text = info.windSpeedString
+       self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
-
-    private func updateUI(info: WelcomeViewModel.WeatherModel) {
-
-        self.cityNameLabel.text = info.cityName
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "dd-MMM HH:mm"
-        self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-        self.temperatureLabel.text = info.temperatureString
-        self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
-        self.weatherDescriptionLabel.text = info.conditionDescription
-        self.windSpeed.text = info.windSpeedString
-        self.windDirection.image = UIImage(systemName: info.windDirectionString)
-    }
-
-    @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
-        viewModel.weatherInfoRequired()
-    }
-
 }
 
 // MARK: - Storyboard Instantiable
-
 extension WelcomeViewController: StoryboardInstantiable {
     static var storyboardName: String {
         return "WelcomeView"

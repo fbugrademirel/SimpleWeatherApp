@@ -12,7 +12,8 @@ import CoreLocation
 class WelcomeViewModel: NSObject {
 
     enum Action {
-        case updateLabels(weatherInfo: WeatherModel)
+        case updateUI(weatherInfo: WeatherModel)
+        case presentSearchView(viewModel: SearchViewModel)
     }
 
     let weatherRepo = WeatherRepository.shared
@@ -27,19 +28,12 @@ class WelcomeViewModel: NSObject {
     var weatherInfo: WeatherModel? = nil {
         didSet {
             if let weatherInfo = weatherInfo {
-                didReceiveAction?(.updateLabels(weatherInfo: weatherInfo))
+                didReceiveAction?(.updateUI(weatherInfo: weatherInfo))
             }
         }
     }
 
     var didReceiveAction: ((Action)-> Void)? = nil
-
-    override init() {
-        super.init()
-//        locationManager.delegate = self
-//        locationManager.requestWhenInUseAuthorization()
-//        locationManager.requestLocation()
-    }
 
     func viewDidLoad() {
         locationManager.delegate = self
@@ -47,9 +41,12 @@ class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
-
-    func weatherInfoRequired() {
+    func weatherInfoByLocationRequired() {
         locationManager.requestLocation()
+    }
+
+    func citySearchRequired(){
+        didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
 
     private func updateWeatherInfo() {
@@ -69,9 +66,7 @@ class WelcomeViewModel: NSObject {
     }
 }
 
-
 //MARK: - Location Manager
-
 extension WelcomeViewModel: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
