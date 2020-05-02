@@ -75,7 +75,7 @@ final class WeatherRepository {
                             completion(weatherInfo)
                         }
                     case .failure(let error):
-                        print("Error getting current weather from Weather Data API \(error.localizedDescription)")
+                        print("Error getting current weather from Weather Data API by ID \(error.localizedDescription)")
                         completion(nil)
                     }
                 }
@@ -89,7 +89,7 @@ final class WeatherRepository {
                             completion(weatherInfo)
                         }
                     case .failure(let error):
-                        print(error.localizedDescription)
+                         print("Error getting current weather from Weather Data API by coordinates \(error.localizedDescription)")
                         completion(nil)
                     }
                 }

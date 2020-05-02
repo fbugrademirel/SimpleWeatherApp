@@ -9,78 +9,57 @@
 import UIKit
 import CoreLocation
 
-class WelcomeViewController: UIViewController {
+class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
 
-    //MARK: - Class Properties
+    //MARK: - Properties
+    @IBOutlet private var cityNameLabel: UILabel!
+    @IBOutlet private var forecastTimeLabel: UILabel!
+    @IBOutlet private var temperatureLabel: UILabel!
+    @IBOutlet private var weatherImage: UIImageView!
+    @IBOutlet private var weatherDescriptionLabel: UILabel!
+
     var viewModel: WelcomeViewModel!
-//    let weatherRepo = WeatherRepository.shared
-//    let cityRepo = CityListRepository.shared
 
-    @IBOutlet private var textField: UITextField!
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var cityName: UILabel!
-
-
-    //MARK: - Lifecycle methods
+    //MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        //refreshWeather()
+
+        viewModel.didReceiveAction = { [weak self] action in
+            self?.handle(action: action)
+        }
+        viewModel.viewDidLoad()
     }
 
+    private func handle(action: WelcomeViewModel.Action) {
+        switch action {
+        case .updateLabels(weatherInfo: let info):
+            updateLabels(info: info)
+        }
+    }
 
+    private func updateLabels(info: WelcomeViewModel.WeatherModel) {
+        cityNameLabel.text = info.cityName
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale.current
+        dateFormatter.dateFormat = "MMM dd HH:mm"
+        forecastTimeLabel.text = dateFormatter.string(from: info.date)
+        temperatureLabel.text = info.temperatureString
+        weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
+        weatherDescriptionLabel.text = info.conditionDescription
+    }
 
+    @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
 
+    }
 
-
-
-
-
-    
-
-
-
-
-//    @IBAction func searchPressed(_ sender: UIButton) {
-//        if let text = textField.text {
-//            cityRepo.getCityInfo(by: text) { [weak self] (data) in
-//                guard let self = self else {return}
-//                print(data[0])
-//                DispatchQueue.main.async {
-//                    self.refreshWeather(by: data[0].id)
-//                }
-//            }
-//        }
-//    }
-//
-//    @IBAction func refreshPressed(_ sender: UIButton) {
-////        refreshWeather()
-//    }
-//
-//    func refreshWeather(by id: Int) {
-//        weatherRepo.getCurrentWeatherInfo(with:.id(id)) { [weak self] (data) in
-//            guard let self = self else { return }
-//            self.view.backgroundColor = #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1)
-//            if let data = data {
-//                DispatchQueue.main.async {
-//                    let formatter = DateFormatter()
-//                    formatter.locale = NSLocale.current
-//                    formatter.dateFormat = "MMM dd HH:mm"
-//                    if let timeInterval = TimeInterval(exactly: Double(data.dt)) {
-//                        let date = Date(timeIntervalSince1970: timeInterval)
-//                        self.label.text = formatter.string(from: date)
-//                        self.cityName.text = data.name
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 
-// MARK: - StoryboardInstantiable
+// MARK: - Storyboard Instantiable
+
 extension WelcomeViewController: StoryboardInstantiable {
     static var storyboardName: String {
-        return "Main"
+        return "WelcomeView"
     }
 
     public static func instantiate(with viewModel: WelcomeViewModel) -> WelcomeViewController {
