@@ -78,6 +78,7 @@ final class NetworkingService {
                     DispatchQueue.main.async {
                         completion(.success(data))
                         print("HTTP CALL MADE")
+                        print(data.description)
                     }
 
                 case 400...499:

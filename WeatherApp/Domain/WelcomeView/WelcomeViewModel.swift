@@ -9,25 +9,27 @@
 import Foundation
 import CoreLocation
 
-class WelcomeViewModel: NSObject {
+final class WelcomeViewModel: NSObject {
 
     enum Action {
-        case updateLabels(weatherInfo: WeatherModel)
+        case updateUI(weatherInfo: WeatherModel)
+        case presentSearchView(viewModel: SearchViewModel)
     }
 
+    let cityRepo = CityListRepository.shared
     let weatherRepo = WeatherRepository.shared
     var locationManager = CLLocationManager()
     var location: CLLocation? = nil {
         didSet {
-            if let _ = location {
-                updateWeatherInfo()
+            if let location = location {
+                updateWeatherInfo(with: .coordinates(location))
             }
         }
     }
     var weatherInfo: WeatherModel? = nil {
         didSet {
             if let weatherInfo = weatherInfo {
-                didReceiveAction?(.updateLabels(weatherInfo: weatherInfo))
+                didReceiveAction?(.updateUI(weatherInfo: weatherInfo))
             }
         }
     }
@@ -40,24 +42,35 @@ class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
-    private func updateWeatherInfo() {
-        guard let location = location else { return }
-        weatherRepo.getCurrentWeatherInfo(with: .coordinates(location)) { [weak self] data in
+    func weatherInfoByLocationRequired() {
+        locationManager.requestLocation()
+    }
+
+    func weatherInfoByCityIdRequired(with id: Int) {
+        updateWeatherInfo(with: .id(id))
+    }
+
+    func citySearchRequired(){
+        didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
+    }
+
+    private func updateWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
                 self.weatherInfo = WeatherModel(date: Date(timeIntervalSince1970: data.dt),
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
+                                                windSpeedDouble: data.wind.speed,
+                                                windDirectionInt: data.wind.deg ?? 0,
                                                 temperatureDouble: data.main.temp)
             }
         }
     }
 }
 
-
 //MARK: - Location Manager
-
 extension WelcomeViewModel: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
@@ -78,6 +91,34 @@ extension WelcomeViewModel {
         let conditionID: Int
         let conditionDescription: String
         let cityName: String
+        let windSpeedDouble: Double
+        var windSpeedString: String {
+            return String(format: "%.0f", windSpeedDouble * 3.6) // in km/h
+        }
+        let windDirectionInt: Int
+        var windDirectionString: String {
+
+            switch windDirectionInt {
+            case 23 ... 68:
+                return "arrow.down.left"
+            case 69 ... 112:
+                return "arrow.left"
+            case 113 ... 157:
+                return "arrow.up.left"
+            case 158 ... 202:
+                return "arrow.up"
+            case 203 ... 247:
+                return "arrow.up.right"
+            case 248 ... 293:
+                return "arrow.right"
+            case 294 ... 337:
+                return "arrow.down.right"
+            case (338 ... 359), (0 ... 23):
+                return "arrow.down"
+            default:
+                return "arrow.down"
+            }
+        }
         let temperatureDouble: Double
         var temperatureString: String {
             return String(format: "%.0f", temperatureDouble)

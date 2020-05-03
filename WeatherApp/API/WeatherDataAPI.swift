@@ -27,6 +27,8 @@ struct WeatherDataAPI {
             url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
         }
 
+        print(url)
+        
         networkingService.dispatchRequest(urlString: url, method: .get) { result in
             switch result {
             case .success(let data):
@@ -79,7 +81,7 @@ extension WeatherDataAPI {
 
     struct Wind: Decodable {
         let speed: Double
-        let deg: Int
+        let deg: Int?
     }
 
     struct Coord: Decodable {

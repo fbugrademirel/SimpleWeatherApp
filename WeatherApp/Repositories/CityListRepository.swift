@@ -14,6 +14,8 @@ private let context = (UIApplication.shared.delegate as! AppDelegate).persistent
 
 final class CityListRepository {
 
+    static let shared = CityListRepository()
+
     /// Initializer reads and saves the json file to coredata if the core data is empty.
     init() {
         var isEmpty: Bool {
@@ -56,8 +58,6 @@ final class CityListRepository {
         print("ending init of city repo")
     }
 
-    static let shared = CityListRepository()
-
     func getCityInfo(by string: String, completion: @escaping ([CityListRepository.City]) -> Void ) {
 
         let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
@@ -65,7 +65,7 @@ final class CityListRepository {
         request.predicate = predicate
         let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
         request.sortDescriptors = [sortDescriptor]
-        request.fetchLimit = 10
+        request.fetchLimit = 5
         do {
             let cities = try context.fetch(request)
             var cityData = [CityListRepository.City]()
