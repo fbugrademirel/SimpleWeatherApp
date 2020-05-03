@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
+final class WelcomeViewController: UIViewController {
 
     //MARK: - Properties
     @IBOutlet private var cityNameLabel: UILabel!
@@ -19,7 +19,7 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet private var weatherDescriptionLabel: UILabel!
     @IBOutlet private var windSpeed: UILabel!
     @IBOutlet private var windDirection: UIImageView!
-    @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet private var stackView: UIStackView!
 
     var viewModel: WelcomeViewModel!
 
@@ -36,6 +36,7 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
     //MARK: - IBAction
     @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
         viewModel.weatherInfoByLocationRequired()
+        
     }
 
     @IBAction func searchBarButtonItemPressed(_ sender: UIBarButtonItem) {
@@ -69,7 +70,9 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
 
     private func presentSearchView(with viewModel: SearchViewModel) {
         let vc = SearchViewController.instantiate(with: viewModel)
-        present(vc, animated: true, completion: nil)
+        vc.delegate = self
+        navigationController?.present(vc, animated: true, completion: nil)
+
     }
 
     private func updateLabels(with info: WelcomeViewModel.WeatherModel) {
@@ -86,6 +89,14 @@ class WelcomeViewController: UIViewController, CLLocationManagerDelegate {
     }
 }
 
+//MARK: - SearchVC Delegate
+
+extension WelcomeViewController: SearchViewControllerDelegate {
+    func didSelectCity(_ id: Int) {
+        viewModel.weatherInfoByCityIdRequired(with: id)
+    }
+}
+
 // MARK: - Storyboard Instantiable
 extension WelcomeViewController: StoryboardInstantiable {
     static var storyboardName: String {
@@ -98,6 +109,9 @@ extension WelcomeViewController: StoryboardInstantiable {
         return viewController
     }
 }
+
+
+
 
 
 //UIView.animate(withDuration: 1, delay: 0, options: .curveEaseOut, animations: {

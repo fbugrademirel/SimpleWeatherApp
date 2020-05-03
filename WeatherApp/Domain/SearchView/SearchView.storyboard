@@ -14,9 +14,33 @@
                     <view key="view" contentMode="scaleToFill" id="ThH-a0-vif">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <subviews>
+                            <searchBar contentMode="redraw" placeholder="Search for a city or location..." translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0fU-8y-Oo4">
+                                <rect key="frame" x="0.0" y="44" width="414" height="56"/>
+                                <color key="barTintColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                            </searchBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HOT-Rq-iFq">
+                                <rect key="frame" x="6" y="106" width="402" height="753"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="l55-Rn-W2z" firstAttribute="trailing" secondItem="HOT-Rq-iFq" secondAttribute="trailing" constant="6" id="9MT-er-G04"/>
+                            <constraint firstItem="l55-Rn-W2z" firstAttribute="bottom" secondItem="HOT-Rq-iFq" secondAttribute="bottom" constant="3" id="EZc-tq-Yma"/>
+                            <constraint firstItem="HOT-Rq-iFq" firstAttribute="top" secondItem="0fU-8y-Oo4" secondAttribute="bottom" constant="6" id="Ljs-j4-xoY"/>
+                            <constraint firstItem="HOT-Rq-iFq" firstAttribute="leading" secondItem="l55-Rn-W2z" secondAttribute="leading" constant="6" id="MZc-bE-MdS"/>
+                            <constraint firstItem="0fU-8y-Oo4" firstAttribute="top" secondItem="l55-Rn-W2z" secondAttribute="top" id="eZz-Gc-d54"/>
+                            <constraint firstItem="0fU-8y-Oo4" firstAttribute="centerX" secondItem="l55-Rn-W2z" secondAttribute="centerX" id="rlc-pJ-ecj"/>
+                            <constraint firstItem="0fU-8y-Oo4" firstAttribute="leading" secondItem="l55-Rn-W2z" secondAttribute="leading" id="wkW-8B-u3M"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="l55-Rn-W2z"/>
                     </view>
+                    <connections>
+                        <outlet property="searchBar" destination="0fU-8y-Oo4" id="DgK-nY-b7G"/>
+                        <outlet property="tableView" destination="HOT-Rq-iFq" id="J4z-dt-SLJ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wkZ-gT-4dX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

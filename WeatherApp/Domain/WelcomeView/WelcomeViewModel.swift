@@ -9,19 +9,20 @@
 import Foundation
 import CoreLocation
 
-class WelcomeViewModel: NSObject {
+final class WelcomeViewModel: NSObject {
 
     enum Action {
         case updateUI(weatherInfo: WeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
     }
 
+    let cityRepo = CityListRepository.shared
     let weatherRepo = WeatherRepository.shared
     var locationManager = CLLocationManager()
     var location: CLLocation? = nil {
         didSet {
-            if let _ = location {
-                updateWeatherInfo()
+            if let location = location {
+                updateWeatherInfo(with: .coordinates(location))
             }
         }
     }
@@ -45,13 +46,16 @@ class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
+    func weatherInfoByCityIdRequired(with id: Int) {
+        updateWeatherInfo(with: .id(id))
+    }
+
     func citySearchRequired(){
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
 
-    private func updateWeatherInfo() {
-        guard let location = location else { return }
-        weatherRepo.getCurrentWeatherInfo(with: .coordinates(location)) { [weak self] data in
+    private func updateWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
                 self.weatherInfo = WeatherModel(date: Date(timeIntervalSince1970: data.dt),
@@ -59,7 +63,7 @@ class WelcomeViewModel: NSObject {
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
                                                 windSpeedDouble: data.wind.speed,
-                                                windDirectionInt: data.wind.deg,
+                                                windDirectionInt: data.wind.deg ?? 0,
                                                 temperatureDouble: data.main.temp)
             }
         }
@@ -93,6 +97,7 @@ extension WelcomeViewModel {
         }
         let windDirectionInt: Int
         var windDirectionString: String {
+
             switch windDirectionInt {
             case 23 ... 68:
                 return "arrow.down.left"
@@ -108,7 +113,7 @@ extension WelcomeViewModel {
                 return "arrow.right"
             case 294 ... 337:
                 return "arrow.down.right"
-            case 338 ... 22:
+            case (338 ... 359), (0 ... 23):
                 return "arrow.down"
             default:
                 return "arrow.down"
