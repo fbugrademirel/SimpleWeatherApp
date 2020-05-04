@@ -65,7 +65,7 @@ final class CityListRepository {
         request.predicate = predicate
         let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
         request.sortDescriptors = [sortDescriptor]
-        request.fetchLimit = 5
+        request.fetchLimit = 10
         do {
             let cities = try context.fetch(request)
             var cityData = [CityListRepository.City]()

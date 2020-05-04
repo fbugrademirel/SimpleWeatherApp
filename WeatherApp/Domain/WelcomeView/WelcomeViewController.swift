@@ -36,14 +36,11 @@ final class WelcomeViewController: UIViewController {
     //MARK: - IBAction
     @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
         viewModel.weatherInfoByLocationRequired()
-        
     }
 
     @IBAction func searchBarButtonItemPressed(_ sender: UIBarButtonItem) {
         viewModel.citySearchRequired()
     }
-
-    
 
     //MARK: - Operations
     private func handle(action: WelcomeViewModel.Action) {
@@ -72,7 +69,6 @@ final class WelcomeViewController: UIViewController {
         let vc = SearchViewController.instantiate(with: viewModel)
         vc.delegate = self
         navigationController?.present(vc, animated: true, completion: nil)
-
     }
 
     private func updateLabels(with info: WelcomeViewModel.WeatherModel) {

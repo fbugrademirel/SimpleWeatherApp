@@ -10,10 +10,6 @@ import Foundation
 
 final class SearchViewModel {
 
-    enum Request {
-        case updateWithData(WeatherDataAPI.WeatherData)
-    }
-
     enum Action {
         case reload
     }
@@ -41,7 +37,7 @@ final class SearchViewModel {
         cityRepo.getCityInfo(by: string) { [weak self] cities in
             self?.cityList = cities
             let cityCellviewModels = cities.map { city -> CityTableViewCellViewModel in //cities.sorted(by: {$1.name > $0.name})
-                let viewModel = CityTableViewCellViewModel(city: city)
+                let viewModel = CityTableViewCellViewModel(city: city, searchString: string)
                 viewModel.didReceiveAction = { [weak self] action in
                     self?.handle(action)
                 }

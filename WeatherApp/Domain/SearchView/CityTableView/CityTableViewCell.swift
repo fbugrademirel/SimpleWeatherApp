@@ -22,7 +22,7 @@ class CityTableViewCell: UITableViewCell {
     @IBOutlet weak var country: UILabel!
 
     override func prepareForReuse() {
-        cityName.text = nil
+        cityName.attributedText = nil
         country.text = nil
     }
 
@@ -34,8 +34,13 @@ class CityTableViewCell: UITableViewCell {
     }
 
     private func configure() {
-        cityName.text = viewModel.city.name
-        country.text = viewModel.city.country
 
+        let fullString = NSMutableAttributedString(string: viewModel.city.name)
+        if let boldPart = viewModel.searchString {
+            fullString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 17), range: NSRange(location: 0, length: boldPart.count))
+        }
+
+        cityName.attributedText = fullString
+        country.text = viewModel.city.country
     }
 }

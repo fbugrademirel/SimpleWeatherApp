@@ -15,9 +15,11 @@ final class CityTableViewCellViewModel {
     }
 
     let city: CityListRepository.City
+    var searchString: String? = nil
 
-    init(city: CityListRepository.City) {
+    init(city: CityListRepository.City, searchString: String) {
         self.city = city
+        self.searchString = searchString
     }
 
     var didReceiveAction: ((Action) -> Void)?
