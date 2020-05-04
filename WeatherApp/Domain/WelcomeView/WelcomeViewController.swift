@@ -20,6 +20,8 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var windSpeed: UILabel!
     @IBOutlet private var windDirection: UIImageView!
     @IBOutlet private var stackView: UIStackView!
+    @IBOutlet private var searchCityButton: UIView!
+    @IBOutlet private var collectionView: UICollectionView!
 
     var viewModel: WelcomeViewModel!
 
@@ -31,6 +33,9 @@ final class WelcomeViewController: UIViewController {
             self?.handle(action: action)
         }
         viewModel.viewDidLoad()
+
+
+        setUI()
     }
 
     //MARK: - IBAction
@@ -40,6 +45,25 @@ final class WelcomeViewController: UIViewController {
 
     @IBAction func searchBarButtonItemPressed(_ sender: UIBarButtonItem) {
         viewModel.citySearchRequired()
+    }
+
+    //MARK: - UI
+
+    private func setUI() {
+        navigationController?.navigationBar.isHidden = true
+
+        searchCityButton.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        searchCityButton.layer.cornerRadius = searchCityButton.frame.size.width / 2
+        searchCityButton.clipsToBounds = true
+//        searchCityButton.layer.shadowColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+//        searchCityButton.layer.shadowRadius = 1
+//        searchCityButton.layer.shadowOpacity = 1 
+
+
+
+        collectionView.layer.cornerRadius = collectionView.frame.size.width / 10
+
+
     }
 
     //MARK: - Operations
