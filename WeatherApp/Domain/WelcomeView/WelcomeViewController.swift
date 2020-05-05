@@ -17,11 +17,15 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var temperatureLabel: UILabel!
     @IBOutlet private var weatherImage: UIImageView!
     @IBOutlet private var weatherDescriptionLabel: UILabel!
+    @IBOutlet private var temperatureUnitIndicator: UILabel!
+    @IBOutlet private var windImage: UIImageView!
     @IBOutlet private var windSpeed: UILabel!
     @IBOutlet private var windDirection: UIImageView!
-    @IBOutlet private var stackView: UIStackView!
-    @IBOutlet private var searchCityButton: UIView!
+    @IBOutlet private var windSpeedUnitIndicator: UILabel!
+    @IBOutlet private var infoStackView: UIStackView!
     @IBOutlet private var collectionView: UICollectionView!
+    @IBOutlet private var bottomButtonsStackView: UIStackView!
+    @IBOutlet private var buttons: [UIButton]!
 
     var viewModel: WelcomeViewModel!
 
@@ -34,35 +38,55 @@ final class WelcomeViewController: UIViewController {
         }
         viewModel.viewDidLoad()
 
-
         setUI()
     }
 
     //MARK: - IBAction
-    @IBAction func locationBarButtonItemPressed(_ sender: UIBarButtonItem) {
+    @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
         viewModel.weatherInfoByLocationRequired()
     }
 
-    @IBAction func searchBarButtonItemPressed(_ sender: UIBarButtonItem) {
+    @IBAction func searchButtonPressed(_ sender: UIButton) {
         viewModel.citySearchRequired()
     }
 
     //MARK: - UI
 
     private func setUI() {
+
+        // Labels
+        cityNameLabel.textColor = AppColor.primary
+        forecastTimeLabel.textColor = AppColor.primary
+        temperatureLabel.textColor = AppColor.primary
+        weatherDescriptionLabel.textColor = AppColor.primary
+        windSpeed.textColor = AppColor.primary
+        temperatureUnitIndicator.textColor = AppColor.primary
+        windSpeedUnitIndicator.textColor = AppColor.primary
+
+
+        // Buttons
+        for each in buttons {
+            each.tintColor = AppColor.primary
+            each.layer.cornerRadius = 25
+            each.backgroundColor = .systemBackground
+        }
+
+        // Images
+        weatherImage.tintColor = AppColor.primary
+        windDirection.tintColor = AppColor.primary
+        windImage.tintColor = AppColor.primary
+
+        // Nav. Bar
         navigationController?.navigationBar.isHidden = true
 
-        searchCityButton.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        searchCityButton.layer.cornerRadius = searchCityButton.frame.size.width / 2
-        searchCityButton.clipsToBounds = true
-//        searchCityButton.layer.shadowColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-//        searchCityButton.layer.shadowRadius = 1
-//        searchCityButton.layer.shadowOpacity = 1 
+        // Bottom StackView
+        bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        bottomButtonsStackView.addBackground(color: .systemBackground)
+        bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
-
-
-        collectionView.layer.cornerRadius = collectionView.frame.size.width / 10
-
+        //CollectionView
+        collectionView.layer.cornerRadius = 30
+        collectionView.backgroundColor = AppColor.primary
 
     }
 
@@ -79,11 +103,11 @@ final class WelcomeViewController: UIViewController {
     private func updateUI(with info: WelcomeViewModel.WeatherModel) {
         DispatchQueue.main.async {
            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-               self.stackView.alpha = 0
+               self.infoStackView.alpha = 0
            }) { _ in
                self.updateLabels(with: info)
                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-                   self.stackView.alpha = 1
+                   self.infoStackView.alpha = 1
                }, completion: nil)
            }
        }

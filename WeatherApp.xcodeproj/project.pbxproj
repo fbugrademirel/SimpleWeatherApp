@@ -13,6 +13,8 @@
 		130131CF245E28DA00CBEDDC /* CityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130131CD245E28DA00CBEDDC /* CityTableViewCell.swift */; };
 		130131D0245E28DA00CBEDDC /* CityTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 130131CE245E28DA00CBEDDC /* CityTableViewCell.xib */; };
 		130131D2245E290000CBEDDC /* CityTableViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130131D1245E290000CBEDDC /* CityTableViewCellViewModel.swift */; };
+		130131D42460C97F00CBEDDC /* StackViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130131D32460C97F00CBEDDC /* StackViewExtension.swift */; };
+		135C452824621B2700C727ED /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135C452724621B2700C727ED /* AppColor.swift */; };
 		13BD7F6A244730EC00762BDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD7F69244730EC00762BDD /* AppDelegate.swift */; };
 		13BD7F6C244730EC00762BDD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD7F6B244730EC00762BDD /* SceneDelegate.swift */; };
 		13BD7F6E244730EC00762BDD /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BD7F6D244730EC00762BDD /* WelcomeViewController.swift */; };
@@ -37,6 +39,8 @@
 		130131CD245E28DA00CBEDDC /* CityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityTableViewCell.swift; sourceTree = "<group>"; };
 		130131CE245E28DA00CBEDDC /* CityTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CityTableViewCell.xib; sourceTree = "<group>"; };
 		130131D1245E290000CBEDDC /* CityTableViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityTableViewCellViewModel.swift; sourceTree = "<group>"; };
+		130131D32460C97F00CBEDDC /* StackViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewExtension.swift; sourceTree = "<group>"; };
+		135C452724621B2700C727ED /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		13BD7F66244730EC00762BDD /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13BD7F69244730EC00762BDD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		13BD7F6B244730EC00762BDD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +92,14 @@
 			path = CityTableView;
 			sourceTree = "<group>";
 		};
+		135C452624621B0700C727ED /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				135C452724621B2700C727ED /* AppColor.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		13BD7F5D244730EC00762BDD = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +136,7 @@
 		13BD7F80244731D500762BDD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				135C452624621B0700C727ED /* Components */,
 				13BD7F9B244B9B4700762BDD /* Supporting Files */,
 				13BD7F962448C6D600762BDD /* Networking */,
 				13BD7F83244767D800762BDD /* Extensions */,
@@ -136,6 +149,7 @@
 			children = (
 				13BD7F84244767F200762BDD /* DictionaryExtension.swift */,
 				13BD7F862447A5D900762BDD /* StoryboardInstantiable.swift */,
+				130131D32460C97F00CBEDDC /* StackViewExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -267,10 +281,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				13BD7F822447322500762BDD /* NetworkingService.swift in Sources */,
+				130131D42460C97F00CBEDDC /* StackViewExtension.swift in Sources */,
 				13BD7F942448A85500762BDD /* WelcomeViewModel.swift in Sources */,
 				13BD7F74244730EC00762BDD /* WeatherApp.xcdatamodeld in Sources */,
 				13BD7F6E244730EC00762BDD /* WelcomeViewController.swift in Sources */,
 				13BD7F8A2447A64700762BDD /* WeatherDataAPI.swift in Sources */,
+				135C452824621B2700C727ED /* AppColor.swift in Sources */,
 				130131CB245E1E3A00CBEDDC /* SearchViewModel.swift in Sources */,
 				13BD7F9F244B9D4600762BDD /* CityListRepository.swift in Sources */,
 				130131C9245E1E2C00CBEDDC /* SearchViewController.swift in Sources */,
