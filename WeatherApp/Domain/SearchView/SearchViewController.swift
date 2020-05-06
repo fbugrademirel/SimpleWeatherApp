@@ -27,6 +27,7 @@ final class SearchViewController: UIViewController {
             self?.handle(action)
         }
         setUI()
+        searchBar.becomeFirstResponder()
     }
 
     func handle(_ action: SearchViewModel.Action) {

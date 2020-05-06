@@ -87,6 +87,12 @@ final class WelcomeViewController: UIViewController {
         //CollectionView
         collectionView.layer.cornerRadius = 30
         collectionView.backgroundColor = AppColor.primary
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.scrollDirection = .horizontal
+        }
+        collectionView.register(UINib(nibName: ForecastCollectionViewCell.nibName, bundle: nil), forCellWithReuseIdentifier: ForecastCollectionViewCell.nibName)
 
     }
 
@@ -131,6 +137,59 @@ final class WelcomeViewController: UIViewController {
        self.windSpeed.text = info.windSpeedString
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
+}
+
+
+//MARK: - CollectionViewDelegate
+
+extension WelcomeViewController: UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+    }
+}
+
+//MARK: - CollectionViewFlowLayout
+
+extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let collectionViewInset: CGFloat = 10
+        let minimumInterimSpacing: CGFloat = 10
+        let numberOFCellsInPortraitMode = 4
+
+        let marginsAndInsets = (collectionViewInset * 2) + collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + (minimumInterimSpacing * CGFloat(numberOFCellsInPortraitMode - 1))
+        let itemWidth = ((collectionView.bounds.size.width - marginsAndInsets) / CGFloat(numberOFCellsInPortraitMode)).rounded(.down)
+        let itemHeight = (collectionView.frame.size.height) * 0.5 
+
+        return CGSize(width: itemWidth, height: itemHeight)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 10, left: 10, bottom: 100, right: 10)
+    }
+
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+//        return 5
+//    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+}
+
+
+extension WelcomeViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastCollectionViewCell.nibName, for: indexPath) as! ForecastCollectionViewCell
+
+        return cell
+    }
+
+
 }
 
 //MARK: - SearchVC Delegate
