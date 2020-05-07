@@ -144,7 +144,30 @@ final class WelcomeViewController: UIViewController {
 
 extension WelcomeViewController: UICollectionViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
+
+        // centerX is the middle point of collectionView
+        let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
+
+        for cell in collectionView.visibleCells {
+            // offsetX is the distance between cell center and the centerX(middle point)
+            var offsetX = centerX - cell.center.x
+            // Make offsetX positive if negative
+            offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
+            // original cell
+            cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+
+            // if the offset is bigger than 50, calculate a scale value and transform
+            if offsetX > 50 {
+                let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
+                var scaleX = 1-offsetPercentage
+
+                if scaleX < 0.8 {
+                    scaleX = 0.8
+                }
+                cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
+            }
+        }
+
     }
 }
 
