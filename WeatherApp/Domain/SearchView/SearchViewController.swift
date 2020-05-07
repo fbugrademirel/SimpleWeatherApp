@@ -37,6 +37,10 @@ final class SearchViewController: UIViewController {
         }
     }
 
+    @IBAction func cancelButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+
     private func setUI() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -64,6 +68,10 @@ extension SearchViewController: UISearchBarDelegate {
         if let text = searchBar.text {
             viewModel.cityListRequired(for: text)
         }
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        dismiss(animated: true, completion: nil)
     }
 }
 

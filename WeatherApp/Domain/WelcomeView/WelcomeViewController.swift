@@ -24,6 +24,7 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var windSpeedUnitIndicator: UILabel!
     @IBOutlet private var infoStackView: UIStackView!
     @IBOutlet private var collectionView: UICollectionView!
+    @IBOutlet private var fillingView: UIView!
     @IBOutlet private var bottomButtonsStackView: UIStackView!
     @IBOutlet private var buttons: [UIButton]!
 
@@ -41,6 +42,18 @@ final class WelcomeViewController: UIViewController {
         setUI()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIView.animate(withDuration: 0.7, delay: 0, options: .curveEaseIn, animations: {
+            self.collectionView.alpha = 1
+            self.fillingView.alpha = 1
+        }, completion: nil)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: false)
+    }
+    
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
         viewModel.weatherInfoByLocationRequired()
@@ -84,8 +97,13 @@ final class WelcomeViewController: UIViewController {
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
+        //SizingView
+        fillingView.backgroundColor = AppColor.primary
+        fillingView.alpha = 0
+
         //CollectionView
         collectionView.layer.cornerRadius = 30
+        collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.backgroundColor = AppColor.primary
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -93,7 +111,7 @@ final class WelcomeViewController: UIViewController {
             layout.scrollDirection = .horizontal
         }
         collectionView.register(UINib(nibName: ForecastCollectionViewCell.nibName, bundle: nil), forCellWithReuseIdentifier: ForecastCollectionViewCell.nibName)
-
+        collectionView.alpha = 0
     }
 
     //MARK: - Operations
@@ -111,9 +129,9 @@ final class WelcomeViewController: UIViewController {
            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                self.infoStackView.alpha = 0
            }) { _ in
-               self.updateLabels(with: info)
-               UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-                   self.infoStackView.alpha = 1
+            self.updateLabels(with: info)
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+            self.infoStackView.alpha = 1
                }, completion: nil)
            }
        }
@@ -167,7 +185,6 @@ extension WelcomeViewController: UICollectionViewDelegate {
                 cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
             }
         }
-
     }
 }
 
@@ -176,30 +193,25 @@ extension WelcomeViewController: UICollectionViewDelegate {
 extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let collectionViewInset: CGFloat = 10
-        let minimumInterimSpacing: CGFloat = 10
+        let collectionViewInset: CGFloat = 0
+        let minimumInterimSpacing: CGFloat = 0
         let numberOFCellsInPortraitMode = 4
 
         let marginsAndInsets = (collectionViewInset * 2) + collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + (minimumInterimSpacing * CGFloat(numberOFCellsInPortraitMode - 1))
         let itemWidth = ((collectionView.bounds.size.width - marginsAndInsets) / CGFloat(numberOFCellsInPortraitMode)).rounded(.down)
-        let itemHeight = (collectionView.frame.size.height) * 0.5 
+        let itemHeight = (collectionView.frame.size.height) 
 
         return CGSize(width: itemWidth, height: itemHeight)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 10, left: 10, bottom: 100, right: 10)
-    }
-
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        return 5
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
 //    }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//        return 3
+//    }
 }
-
 
 extension WelcomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -208,11 +220,8 @@ extension WelcomeViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastCollectionViewCell.nibName, for: indexPath) as! ForecastCollectionViewCell
-
         return cell
     }
-
-
 }
 
 //MARK: - SearchVC Delegate

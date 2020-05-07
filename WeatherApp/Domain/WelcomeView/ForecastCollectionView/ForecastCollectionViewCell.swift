@@ -21,5 +21,4 @@ class ForecastCollectionViewCell: UICollectionViewCell {
         // Initialization code
         containerView.backgroundColor = AppColor.primary
     }
-
 }
