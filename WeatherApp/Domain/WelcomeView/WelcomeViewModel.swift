@@ -12,7 +12,8 @@ import CoreLocation
 final class WelcomeViewModel: NSObject {
 
     enum Action {
-        case updateUI(weatherInfo: WeatherModel)
+        case reloadCollectionView
+        case updateUI(with: CurrentWeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
     }
 
@@ -22,19 +23,24 @@ final class WelcomeViewModel: NSObject {
     var location: CLLocation? = nil {
         didSet {
             if let location = location {
-                updateWeatherInfo(with: .coordinates(location))
+                updateCurrentWeatherInfo(with: .coordinates(location))
+                updateForecastWeatherInfo(with: .coordinates(location))
             }
         }
     }
-    var weatherInfo: WeatherModel? = nil {
+    var currentWeatherInfo: CurrentWeatherModel? = nil {
         didSet {
-            if let weatherInfo = weatherInfo {
-                didReceiveAction?(.updateUI(weatherInfo: weatherInfo))
+            if let weatherInfo = currentWeatherInfo {
+                didReceiveAction?(.updateUI(with: (weatherInfo)))
             }
         }
     }
-
-    var didReceiveAction: ((Action)-> Void)? = nil
+    var forecastColletionViewCellModels: [ForecastCollectionViewCellModel] = [] {
+        didSet {
+            didReceiveAction?(.reloadCollectionView)
+        }
+    }
+    var didReceiveAction: ((Action)-> Void)?
 
     func viewDidLoad() {
         locationManager.delegate = self
@@ -47,18 +53,23 @@ final class WelcomeViewModel: NSObject {
     }
 
     func weatherInfoByCityIdRequired(with id: Int) {
-        updateWeatherInfo(with: .id(id))
+        updateCurrentWeatherInfo(with: .id(id))
+        updateForecastWeatherInfo(with: .id(id))
+    }
+
+    func weatherForecastByCityIdRequired(with id: Int) {
+        locationManager.requestLocation()
     }
 
     func citySearchRequired(){
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
 
-    private func updateWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+    private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
-                self.weatherInfo = WeatherModel(date: Date(timeIntervalSince1970: data.dt),
+                self.currentWeatherInfo = CurrentWeatherModel(date: Date(timeIntervalSince1970: data.dt),
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
@@ -66,6 +77,27 @@ final class WelcomeViewModel: NSObject {
                                                 windDirectionInt: data.wind.deg ?? 0,
                                                 temperatureDouble: data.main.temp)
             }
+        }
+    }
+
+    private func updateForecastWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
+            guard let self = self, let forecastData = forecastData else { return }
+
+            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
+                let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
+                                        temperatureDouble: forecastWeatherData.main.temp,
+                                        conditionID: forecastWeatherData.weather[0].id,
+                                        windSpeed: forecastWeatherData.wind.speed,
+                                        windDirection: forecastWeatherData.wind.deg ?? 0)
+                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
+                                                                temperature: forecast.temperatureString,
+                                                                date: forecast.date,
+                                                                windSpeed: forecast.windSpeedString,
+                                                                windDirection: forecast.windDirectionForSFIcons)
+                return viewModel
+            }
+            self.forecastColletionViewCellModels = forecastCellViewModels
         }
     }
 }
@@ -84,9 +116,15 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
     }
 }
 
-//MARK: - Weather Model
+//MARK: - Weather Models
 extension WelcomeViewModel {
-    struct WeatherModel {
+
+    enum ModelType {
+        case currentWeather (CurrentWeatherModel)
+        case fiveDaysForecast (FiveDayForecastModel)
+    }
+
+    struct CurrentWeatherModel {
         let date: Date
         let conditionID: Int
         let conditionDescription: String
@@ -97,33 +135,45 @@ extension WelcomeViewModel {
         }
         let windDirectionInt: Int
         var windDirectionString: String {
-
-            switch windDirectionInt {
-            case 23 ... 68:
-                return "arrow.down.left"
-            case 69 ... 112:
-                return "arrow.left"
-            case 113 ... 157:
-                return "arrow.up.left"
-            case 158 ... 202:
-                return "arrow.up"
-            case 203 ... 247:
-                return "arrow.up.right"
-            case 248 ... 293:
-                return "arrow.right"
-            case 294 ... 337:
-                return "arrow.down.right"
-            case (338 ... 359), (0 ... 23):
-                return "arrow.down"
-            default:
-                return "arrow.down"
-            }
+            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirectionInt)
         }
         let temperatureDouble: Double
         var temperatureString: String {
             return String(format: "%.0f", temperatureDouble)
         }
+
         var conditionNameForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIconsForWeatherCondition(conditionID)
+        }
+    }
+
+    struct FiveDayForecastModel {
+        let forecastList: [Forecast]
+        let cityName: String
+    }
+
+    struct Forecast {
+        let date: Date
+        let temperatureDouble: Double
+        var temperatureString: String {
+            return String(format: "%.0f", temperatureDouble)
+        }
+        let conditionID: Int
+        var conditionNameForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIconsForWeatherCondition(conditionID)
+        }
+        let windSpeed: Double
+        var windSpeedString: String {
+            return String(format: "%.0f", windSpeed * 3.6) // in km/h
+        }
+        let windDirection: Int
+        var windDirectionForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirection)
+        }
+    }
+
+    struct CommonWeatherModelOpearaions {
+        static func getSFIconsForWeatherCondition(_ conditionID: Int) -> String {
             switch conditionID {
             case 200 ... 232:
                 return "cloud.bolt.rain"
@@ -147,6 +197,28 @@ extension WelcomeViewModel {
                 return "cloud"
             default:
                 return "cloud"
+            }
+        }
+        static func getSFIconsForWindDirection(_ degree: Int) -> String {
+            switch degree {
+            case 23 ... 68:
+                return "arrow.down.left"
+            case 69 ... 112:
+                return "arrow.left"
+            case 113 ... 157:
+                return "arrow.up.left"
+            case 158 ... 202:
+                return "arrow.up"
+            case 203 ... 247:
+                return "arrow.up.right"
+            case 248 ... 293:
+                return "arrow.right"
+            case 294 ... 337:
+                return "arrow.down.right"
+            case (338 ... 359), (0 ... 23):
+                return "arrow.down"
+            default:
+                return "arrow.down"
             }
         }
     }
