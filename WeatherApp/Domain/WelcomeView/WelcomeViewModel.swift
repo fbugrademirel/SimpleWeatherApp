@@ -12,7 +12,8 @@ import CoreLocation
 final class WelcomeViewModel: NSObject {
 
     enum Action {
-        case updateUI(weatherInfo: WeatherModel)
+        case reloadCollectionView
+        case updateUI(for: ModelType)
         case presentSearchView(viewModel: SearchViewModel)
     }
 
@@ -22,15 +23,28 @@ final class WelcomeViewModel: NSObject {
     var location: CLLocation? = nil {
         didSet {
             if let location = location {
-                updateWeatherInfo(with: .coordinates(location))
+                updateCurrentWeatherInfo(with: .coordinates(location))
+                updateForecastWeatherInfo(with: .coordinates(location))
             }
         }
     }
-    var weatherInfo: WeatherModel? = nil {
+    var weatherInfo: CurrentWeatherModel? = nil {
         didSet {
             if let weatherInfo = weatherInfo {
-                didReceiveAction?(.updateUI(weatherInfo: weatherInfo))
+                didReceiveAction?(.updateUI(for: .currentWeather(weatherInfo)))
             }
+        }
+    }
+    var forecastInfo: FiveDayForecastModel? = nil {
+        didSet {
+            if let forecastInfo = forecastInfo {
+                didReceiveAction?(.updateUI(for: .fiveDaysForecast(forecastInfo)))
+            }
+        }
+    }
+    var forecastColletionViewCellModels: [ForecastCollectionViewCellModel] = [] {
+        didSet {
+            didReceiveAction?(.reloadCollectionView)
         }
     }
 
@@ -47,18 +61,44 @@ final class WelcomeViewModel: NSObject {
     }
 
     func weatherInfoByCityIdRequired(with id: Int) {
-        updateWeatherInfo(with: .id(id))
+        updateCurrentWeatherInfo(with: .id(id))
+        updateForecastWeatherInfo(with: .id(id))
+    }
+
+    func weatherForecastByCityIdRequired(with id: Int) {
+        locationManager.requestLocation()
     }
 
     func citySearchRequired(){
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
 
-    private func updateWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+    private func updateForecastWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
+            guard let self = self, let forecastData = forecastData else { return }
+
+            var forecastList  = [Forecast]()
+            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
+                let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
+                                        temperatureDouble: forecastWeatherData.main.temp,
+                                        conditionID: forecastWeatherData.weather[0].id)
+                forecastList.append(forecast)
+                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
+                                                                temperature: forecast.temperatureString,
+                                                                date: forecast.date)
+                return viewModel
+            }
+            self.forecastInfo = FiveDayForecastModel(forecastList: forecastList, cityName: forecastData.city.name)
+            self.forecastColletionViewCellModels = forecastCellViewModels
+        }
+    }
+
+
+    private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
-                self.weatherInfo = WeatherModel(date: Date(timeIntervalSince1970: data.dt),
+                self.weatherInfo = CurrentWeatherModel(date: Date(timeIntervalSince1970: data.dt),
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
@@ -84,9 +124,15 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
     }
 }
 
-//MARK: - Weather Model
+//MARK: - Weather Models
 extension WelcomeViewModel {
-    struct WeatherModel {
+
+    enum ModelType {
+        case currentWeather (CurrentWeatherModel)
+        case fiveDaysForecast (FiveDayForecastModel)
+    }
+
+    struct CurrentWeatherModel {
         let date: Date
         let conditionID: Int
         let conditionDescription: String
@@ -123,7 +169,31 @@ extension WelcomeViewModel {
         var temperatureString: String {
             return String(format: "%.0f", temperatureDouble)
         }
+
         var conditionNameForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIcons(conditionID: conditionID)
+        }
+    }
+
+    struct FiveDayForecastModel {
+        let forecastList: [Forecast]
+        let cityName: String
+    }
+
+    struct Forecast {
+        let date: Date
+        let temperatureDouble: Double
+        var temperatureString: String {
+            return String(format: "%.0f", temperatureDouble)
+        }
+        let conditionID: Int
+        var conditionNameForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIcons(conditionID: conditionID)
+        }
+    }
+
+    struct CommonWeatherModelOpearaions {
+        static func getSFIcons(conditionID: Int) -> String {
             switch conditionID {
             case 200 ... 232:
                 return "cloud.bolt.rain"

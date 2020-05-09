@@ -8,6 +8,10 @@
 
 import Foundation
 
-class ForecastCollectionViewModel {
-    
+class ForecastCollectionViewCellModel {
+
+
+    var didReceiveAction()
+
+
 }

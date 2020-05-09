@@ -41,10 +41,6 @@ final class WelcomeViewController: UIViewController {
         viewModel.viewDidLoad()
 
         setUI()
-        let a = WeatherRepository.shared
-        a.getForecastWeatherInfo(with: .id(5341256)) { [weak self] (data) in
-            print("FORECAST: \(data)")
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -56,7 +52,7 @@ final class WelcomeViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: false)
+       // collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: false)
     }
     
     //MARK: - IBAction
@@ -122,24 +118,41 @@ final class WelcomeViewController: UIViewController {
     //MARK: - Operations
     private func handle(action: WelcomeViewModel.Action) {
         switch action {
-        case .updateUI(weatherInfo: let info):
-           updateUI(with: info)
+        case .updateUI(for: .currentWeather(let model)):
+            updateUI(for: .currentWeather(model))
+        case .updateUI(for: .fiveDaysForecast(let model)):
+            updateUI(for: .fiveDaysForecast(model))
         case .presentSearchView(viewModel: let viewModel):
             presentSearchView(with: viewModel)
+        case .reloadCollectionView:
+            collectionView.reloadData()
         }
+
     }
 
-    private func updateUI(with info: WelcomeViewModel.WeatherModel) {
+    private func updateUI(for type: WelcomeViewModel.ModelType) {
         DispatchQueue.main.async {
-           UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-               self.infoStackView.alpha = 0
-           }) { _ in
-            self.updateLabels(with: info)
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-            self.infoStackView.alpha = 1
-               }, completion: nil)
-           }
-       }
+            switch type {
+            case .currentWeather(let model):
+                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                    self.infoStackView.alpha = 0
+                }) { _ in
+                    self.updateCurrentWeatherUIelements(with: model)
+                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+                 self.infoStackView.alpha = 1
+                    }, completion: nil)
+                }
+            case .fiveDaysForecast(let model):
+                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                    self.infoStackView.alpha = 0
+                }) { _ in
+                    self.updateForecasrWeatherUIElements(with: model)
+                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+                 self.infoStackView.alpha = 1
+                    }, completion: nil)
+                }
+            }
+        }
     }
 
     private func presentSearchView(with viewModel: SearchViewModel) {
@@ -148,7 +161,7 @@ final class WelcomeViewController: UIViewController {
         navigationController?.present(vc, animated: true, completion: nil)
     }
 
-    private func updateLabels(with info: WelcomeViewModel.WeatherModel) {
+    private func updateCurrentWeatherUIelements(with info: WelcomeViewModel.CurrentWeatherModel) {
        self.cityNameLabel.text = info.cityName
        let dateFormatter = DateFormatter()
        dateFormatter.locale = NSLocale.current
@@ -159,6 +172,10 @@ final class WelcomeViewController: UIViewController {
        self.weatherDescriptionLabel.text = info.conditionDescription
        self.windSpeed.text = info.windSpeedString
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
+    }
+
+    private func updateForecasrWeatherUIElements(with info: WelcomeViewModel.FiveDayForecastModel) {
+        
     }
 }
 
@@ -220,11 +237,12 @@ extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
 
 extension WelcomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return viewModel.forecastColletionViewCellModels.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastCollectionViewCell.nibName, for: indexPath) as! ForecastCollectionViewCell
+        cell.viewModel = viewModel.forecastColletionViewCellModels[indexPath.row]
         return cell
     }
 }
