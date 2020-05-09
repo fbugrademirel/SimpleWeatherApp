@@ -32,6 +32,7 @@ final class WelcomeViewController: UIViewController {
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
+
         super.viewDidLoad()
 
         viewModel.didReceiveAction = { [weak self] action in
@@ -40,6 +41,10 @@ final class WelcomeViewController: UIViewController {
         viewModel.viewDidLoad()
 
         setUI()
+        let a = WeatherRepository.shared
+        a.getForecastWeatherInfo(with: .id(5341256)) { [weak self] (data) in
+            print("FORECAST: \(data)")
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {

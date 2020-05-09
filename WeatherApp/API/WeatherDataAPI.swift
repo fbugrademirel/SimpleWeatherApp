@@ -10,30 +10,23 @@ import Foundation
 import CoreLocation
 
 private let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&id="
-private let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&q="
+private let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=0a4f004ec035e586cf9fa1bff7bb191d&units=metric&id="
 
 struct WeatherDataAPI {
 
     private let networkingService = NetworkingService()
 
-    func getCurrentWeatherInfo(by locationInformation: LocationInformation, with completion: @escaping (Result<WeatherData, Error>) -> Void) {
+    func getCurrentWeatherInfo(by locationInformation: LocationInformation, with completion: @escaping (Result<CurrentWeatherData, Error>) -> Void) {
 
-        var url = ""
+        let url = setURL(locationInformation: locationInformation, forecastType: .current)
 
-        switch locationInformation {
-        case .id(let id):
-            url = "\(weatherURL)\(String(id))"
-        case .coordinates(let location):
-            url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
-        }
+        print("Current forecast url: \(url)")
 
-        print(url)
-        
         networkingService.dispatchRequest(urlString: url, method: .get) { result in
             switch result {
             case .success(let data):
                 do {
-                    let weather = try JSONDecoder().decode(WeatherData.self, from: data)
+                    let weather = try JSONDecoder().decode(CurrentWeatherData.self, from: data)
                     DispatchQueue.main.async {
                         completion(.success(weather))
                     }
@@ -49,6 +42,50 @@ struct WeatherDataAPI {
             }
         }
     }
+
+    func getForecastWeatherInfo(by locationInformation: LocationInformation, completion: @escaping ((Result<ForecastData, Error>) -> Void)) {
+
+        let url = setURL(locationInformation: locationInformation, forecastType: .fiveDays)
+
+        print("5 days forecast url: \(url)")
+
+        networkingService.dispatchRequest(urlString: url, method: .get) { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let weather = try JSONDecoder().decode(ForecastData.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(weather))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    private func setURL(locationInformation: LocationInformation, forecastType: ForecastType) -> String {
+
+        var url = ""
+
+        switch (locationInformation, forecastType) {
+        case (.id(let id), .current):
+            url = "\(weatherURL)\(String(id))"
+        case (.id(let id), .fiveDays):
+            url = "\(forecastURL)\(String(id))"
+        case (.coordinates(let location), .current):
+            url = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        case (.coordinates(let location), .fiveDays):
+            url = "\(forecastURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        }
+        return url
+    }
 }
 
 //MARK: - Weather Data Decodable
@@ -59,7 +96,26 @@ extension WeatherDataAPI {
         case id(Int)
     }
 
-    struct WeatherData: Decodable {
+    enum ForecastType {
+        case current
+        case fiveDays
+    }
+
+    // Forecast Weather
+    struct ForecastData: Decodable {
+        let list: [ForecastWeatherData]
+        let city: CityListRepository.City
+    }
+
+    struct ForecastWeatherData: Decodable {
+        let dt: Double
+        let main: Main
+        let weather: [Weather]
+        let wind: Wind
+    }
+
+    //Current Weather
+    struct CurrentWeatherData: Decodable {
         let coord: Coord
         let dt: Double
         let name: String
