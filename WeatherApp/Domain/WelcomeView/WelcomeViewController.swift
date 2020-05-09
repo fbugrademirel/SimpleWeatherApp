@@ -138,10 +138,16 @@ final class WelcomeViewController: UIViewController {
                 self.fillingView.alpha = 0
             }) { _ in
                 self.collectionView.reloadData()
+                self.transformCells(view: self.collectionView)
                 UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
                     self.collectionView.alpha = 1
                     self.fillingView.alpha = 1
-                }, completion: nil)
+                }) { _ in
+                    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                        self.transformCells(view: self.collectionView)
+                        self.collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
+                    }, completion: nil)
+                }
             }
         }
     }
@@ -164,6 +170,30 @@ final class WelcomeViewController: UIViewController {
        self.windSpeed.text = info.windSpeedString
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
+
+    private func transformCells(view: UIScrollView) {
+        let centerX = view.contentOffset.x + view.frame.size.width/2
+        for cell in collectionView.visibleCells {
+            // offsetX is the distance between cell center and the centerX(middle point)
+            var offsetX = centerX - cell.center.x
+            // Make offsetX positive if negative
+            offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
+            // original cell
+            cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+
+            // if the offset is bigger than 50, calculate a scale value and transform
+            if offsetX > 50 {
+               let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
+               var scaleX = 1-offsetPercentage
+
+               if scaleX < 0.8 {
+                   scaleX = 0.8
+
+                }
+               cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
+            }
+        }
+    }
 }
 
 //MARK: - ScrollViewDelegate
@@ -175,27 +205,7 @@ extension WelcomeViewController: UIScrollViewDelegate {
             }
         } else if scrollView == collectionView {
             // centerX is the middle point of collectionView
-            let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
-
-            for cell in collectionView.visibleCells {
-                // offsetX is the distance between cell center and the centerX(middle point)
-                var offsetX = centerX - cell.center.x
-                // Make offsetX positive if negative
-                offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
-                // original cell
-                cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-
-                // if the offset is bigger than 50, calculate a scale value and transform
-                if offsetX > 50 {
-                    let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
-                    var scaleX = 1-offsetPercentage
-
-                    if scaleX < 0.8 {
-                        scaleX = 0.8
-                    }
-                    cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
-                }
-            }
+            transformCells(view: scrollView)
         }
     }
 }
@@ -204,7 +214,7 @@ extension WelcomeViewController: UIScrollViewDelegate {
 extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let collectionViewInset: CGFloat = 0
+        let collectionViewInset: CGFloat = 10
         let minimumInterimSpacing: CGFloat = 0
         let numberOFCellsInPortraitMode = 4
 
@@ -216,7 +226,7 @@ extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 10, left: 5, bottom: 10, right: 10)
+        UIEdgeInsets(top: 0, left: 10, bottom: (collectionView.frame.size.height * 0.15), right: 10)
     }
 }
 

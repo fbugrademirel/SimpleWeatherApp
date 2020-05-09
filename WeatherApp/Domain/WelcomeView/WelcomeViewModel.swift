@@ -87,10 +87,14 @@ final class WelcomeViewModel: NSObject {
             let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
                 let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
                                         temperatureDouble: forecastWeatherData.main.temp,
-                                        conditionID: forecastWeatherData.weather[0].id)
+                                        conditionID: forecastWeatherData.weather[0].id,
+                                        windSpeed: forecastWeatherData.wind.speed,
+                                        windDirection: forecastWeatherData.wind.deg ?? 0)
                 let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
                                                                 temperature: forecast.temperatureString,
-                                                                date: forecast.date)
+                                                                date: forecast.date,
+                                                                windSpeed: forecast.windSpeedString,
+                                                                windDirection: forecast.windDirectionForSFIcons)
                 return viewModel
             }
             self.forecastColletionViewCellModels = forecastCellViewModels
@@ -131,27 +135,7 @@ extension WelcomeViewModel {
         }
         let windDirectionInt: Int
         var windDirectionString: String {
-
-            switch windDirectionInt {
-            case 23 ... 68:
-                return "arrow.down.left"
-            case 69 ... 112:
-                return "arrow.left"
-            case 113 ... 157:
-                return "arrow.up.left"
-            case 158 ... 202:
-                return "arrow.up"
-            case 203 ... 247:
-                return "arrow.up.right"
-            case 248 ... 293:
-                return "arrow.right"
-            case 294 ... 337:
-                return "arrow.down.right"
-            case (338 ... 359), (0 ... 23):
-                return "arrow.down"
-            default:
-                return "arrow.down"
-            }
+            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirectionInt)
         }
         let temperatureDouble: Double
         var temperatureString: String {
@@ -159,7 +143,7 @@ extension WelcomeViewModel {
         }
 
         var conditionNameForSFIcons: String {
-            CommonWeatherModelOpearaions.getSFIcons(conditionID: conditionID)
+            CommonWeatherModelOpearaions.getSFIconsForWeatherCondition(conditionID)
         }
     }
 
@@ -176,12 +160,20 @@ extension WelcomeViewModel {
         }
         let conditionID: Int
         var conditionNameForSFIcons: String {
-            CommonWeatherModelOpearaions.getSFIcons(conditionID: conditionID)
+            CommonWeatherModelOpearaions.getSFIconsForWeatherCondition(conditionID)
+        }
+        let windSpeed: Double
+        var windSpeedString: String {
+            return String(format: "%.0f", windSpeed * 3.6) // in km/h
+        }
+        let windDirection: Int
+        var windDirectionForSFIcons: String {
+            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirection)
         }
     }
 
     struct CommonWeatherModelOpearaions {
-        static func getSFIcons(conditionID: Int) -> String {
+        static func getSFIconsForWeatherCondition(_ conditionID: Int) -> String {
             switch conditionID {
             case 200 ... 232:
                 return "cloud.bolt.rain"
@@ -205,6 +197,28 @@ extension WelcomeViewModel {
                 return "cloud"
             default:
                 return "cloud"
+            }
+        }
+        static func getSFIconsForWindDirection(_ degree: Int) -> String {
+            switch degree {
+            case 23 ... 68:
+                return "arrow.down.left"
+            case 69 ... 112:
+                return "arrow.left"
+            case 113 ... 157:
+                return "arrow.up.left"
+            case 158 ... 202:
+                return "arrow.up"
+            case 203 ... 247:
+                return "arrow.up.right"
+            case 248 ... 293:
+                return "arrow.right"
+            case 294 ... 337:
+                return "arrow.down.right"
+            case (338 ... 359), (0 ... 23):
+                return "arrow.down"
+            default:
+                return "arrow.down"
             }
         }
     }

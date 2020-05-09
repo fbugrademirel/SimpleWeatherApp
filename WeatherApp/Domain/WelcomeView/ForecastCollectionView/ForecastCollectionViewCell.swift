@@ -16,6 +16,8 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
     @IBOutlet private var forecastImage: UIImageView!
     @IBOutlet private var temperatureLabel: UILabel!
     @IBOutlet private var timeLabel: UILabel!
+    @IBOutlet private var windDirection: UIImageView!
+    @IBOutlet private var windSpeed: UILabel!
 
     var viewModel: ForecastCollectionViewCellModel! {
         didSet {
@@ -28,6 +30,12 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         containerView.backgroundColor = AppColor.primary
     }
 
+    override func prepareForReuse() {
+        temperatureLabel.text = nil
+        forecastImage.image = nil
+        timeLabel.text = nil
+    }
+
     func configure() {
         forecastImage.image = UIImage(systemName: viewModel.imageString)
         temperatureLabel.text = viewModel.temperature
@@ -35,5 +43,7 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "HH:mm"
         timeLabel.text = dateFormatter.string(from: viewModel.date)
+        windDirection.image = UIImage(systemName: viewModel.windDirection)
+        windSpeed.text = viewModel.windSpeed
     }
 }
