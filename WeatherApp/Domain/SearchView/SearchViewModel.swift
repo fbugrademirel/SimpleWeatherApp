@@ -26,6 +26,7 @@ final class SearchViewModel {
 
     var didReceiveAction: ((Action)->())?
 
+    // FIXME: - For future use
     func handle(_ action: CityTableViewCellViewModel.Action) {
         switch action {
         case .selectCity:

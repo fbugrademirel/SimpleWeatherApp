@@ -92,8 +92,8 @@
 			isa = PBXGroup;
 			children = (
 				130131CD245E28DA00CBEDDC /* CityTableViewCell.swift */,
-				130131CE245E28DA00CBEDDC /* CityTableViewCell.xib */,
 				130131D1245E290000CBEDDC /* CityTableViewCellViewModel.swift */,
+				130131CE245E28DA00CBEDDC /* CityTableViewCell.xib */,
 			);
 			path = CityTableView;
 			sourceTree = "<group>";
@@ -110,8 +110,8 @@
 			isa = PBXGroup;
 			children = (
 				135C452B2463564100C727ED /* ForecastCollectionViewCell.swift */,
-				135C452C2463564100C727ED /* ForecastCollectionViewCell.xib */,
 				135C452F2463565800C727ED /* ForecastCollectionViewCellModel.swift */,
+				135C452C2463564100C727ED /* ForecastCollectionViewCell.xib */,
 			);
 			path = ForecastCollectionView;
 			sourceTree = "<group>";

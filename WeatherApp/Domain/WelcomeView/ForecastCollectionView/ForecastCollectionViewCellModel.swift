@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ForecastCollectionViewCellModel {
+final class ForecastCollectionViewCellModel {
 
     let imageString: String
     let temperature: String

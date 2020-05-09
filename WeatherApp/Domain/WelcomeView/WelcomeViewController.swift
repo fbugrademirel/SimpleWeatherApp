@@ -12,6 +12,7 @@ import CoreLocation
 final class WelcomeViewController: UIViewController {
 
     //MARK: - Properties
+    @IBOutlet private var containerScrollView: UIScrollView!
     @IBOutlet private var cityNameLabel: UILabel!
     @IBOutlet private var forecastTimeLabel: UILabel!
     @IBOutlet private var temperatureLabel: UILabel!
@@ -32,29 +33,16 @@ final class WelcomeViewController: UIViewController {
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
-
         super.viewDidLoad()
 
         viewModel.didReceiveAction = { [weak self] action in
             self?.handle(action: action)
         }
         viewModel.viewDidLoad()
-
         setUI()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        UIView.animate(withDuration: 0.7, delay: 0, options: .curveEaseIn, animations: {
-            self.collectionView.alpha = 1
-            self.fillingView.alpha = 1
-        }, completion: nil)
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-       // collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: false)
-    }
-    
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
         viewModel.weatherInfoByLocationRequired()
@@ -77,13 +65,16 @@ final class WelcomeViewController: UIViewController {
         temperatureUnitIndicator.textColor = AppColor.primary
         windSpeedUnitIndicator.textColor = AppColor.primary
 
-
         // Buttons
         for each in buttons {
             each.tintColor = AppColor.primary
             each.layer.cornerRadius = 25
             each.backgroundColor = .systemBackground
         }
+
+        //scroll view
+
+        containerScrollView.delegate = self
 
         // Images
         weatherImage.tintColor = AppColor.primary
@@ -118,39 +109,39 @@ final class WelcomeViewController: UIViewController {
     //MARK: - Operations
     private func handle(action: WelcomeViewModel.Action) {
         switch action {
-        case .updateUI(for: .currentWeather(let model)):
-            updateUI(for: .currentWeather(model))
-        case .updateUI(for: .fiveDaysForecast(let model)):
-            updateUI(for: .fiveDaysForecast(model))
+        case .updateUI(with: let model):
+            updateUIforCurrentWeatherLabels(with: model)
         case .presentSearchView(viewModel: let viewModel):
             presentSearchView(with: viewModel)
         case .reloadCollectionView:
-            collectionView.reloadData()
+            updateUIForForecastCells()
         }
-
     }
 
-    private func updateUI(for type: WelcomeViewModel.ModelType) {
+    private func updateUIforCurrentWeatherLabels(with model: WelcomeViewModel.CurrentWeatherModel) {
         DispatchQueue.main.async {
-            switch type {
-            case .currentWeather(let model):
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-                    self.infoStackView.alpha = 0
-                }) { _ in
-                    self.updateCurrentWeatherUIelements(with: model)
-                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-                 self.infoStackView.alpha = 1
-                    }, completion: nil)
-                }
-            case .fiveDaysForecast(let model):
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-                    self.infoStackView.alpha = 0
-                }) { _ in
-                    self.updateForecasrWeatherUIElements(with: model)
-                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-                 self.infoStackView.alpha = 1
-                    }, completion: nil)
-                }
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                self.infoStackView.alpha = 0
+            }) { _ in
+                self.updateCurrentWeatherUIelements(with: model)
+             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
+             self.infoStackView.alpha = 1
+                }, completion: nil)
+            }
+        }
+    }
+
+    private func updateUIForForecastCells() {
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseOut, animations: {
+                self.collectionView.alpha = 0
+                self.fillingView.alpha = 0
+            }) { _ in
+                self.collectionView.reloadData()
+                UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
+                    self.collectionView.alpha = 1
+                    self.fillingView.alpha = 1
+                }, completion: nil)
             }
         }
     }
@@ -165,7 +156,7 @@ final class WelcomeViewController: UIViewController {
        self.cityNameLabel.text = info.cityName
        let dateFormatter = DateFormatter()
        dateFormatter.locale = NSLocale.current
-       dateFormatter.dateFormat = "dd-MMM HH:mm"
+       dateFormatter.dateFormat = "dd MMM HH:mm"
        self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
        self.temperatureLabel.text = info.temperatureString
        self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
@@ -173,45 +164,43 @@ final class WelcomeViewController: UIViewController {
        self.windSpeed.text = info.windSpeedString
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
-
-    private func updateForecasrWeatherUIElements(with info: WelcomeViewModel.FiveDayForecastModel) {
-        
-    }
 }
 
-
-//MARK: - CollectionViewDelegate
-
-extension WelcomeViewController: UICollectionViewDelegate {
+//MARK: - ScrollViewDelegate
+extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == containerScrollView {
+            if scrollView.contentOffset.y > 0 {
+                scrollView.contentOffset.y = 0
+            }
+        } else if scrollView == collectionView {
+            // centerX is the middle point of collectionView
+            let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
 
-        // centerX is the middle point of collectionView
-        let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
+            for cell in collectionView.visibleCells {
+                // offsetX is the distance between cell center and the centerX(middle point)
+                var offsetX = centerX - cell.center.x
+                // Make offsetX positive if negative
+                offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
+                // original cell
+                cell.transform = CGAffineTransform(scaleX: 1, y: 1)
 
-        for cell in collectionView.visibleCells {
-            // offsetX is the distance between cell center and the centerX(middle point)
-            var offsetX = centerX - cell.center.x
-            // Make offsetX positive if negative
-            offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
-            // original cell
-            cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                // if the offset is bigger than 50, calculate a scale value and transform
+                if offsetX > 50 {
+                    let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
+                    var scaleX = 1-offsetPercentage
 
-            // if the offset is bigger than 50, calculate a scale value and transform
-            if offsetX > 50 {
-                let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
-                var scaleX = 1-offsetPercentage
-
-                if scaleX < 0.8 {
-                    scaleX = 0.8
+                    if scaleX < 0.8 {
+                        scaleX = 0.8
+                    }
+                    cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
                 }
-                cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
             }
         }
     }
 }
 
 //MARK: - CollectionViewFlowLayout
-
 extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -221,20 +210,17 @@ extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
 
         let marginsAndInsets = (collectionViewInset * 2) + collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + (minimumInterimSpacing * CGFloat(numberOFCellsInPortraitMode - 1))
         let itemWidth = ((collectionView.bounds.size.width - marginsAndInsets) / CGFloat(numberOFCellsInPortraitMode)).rounded(.down)
-        let itemHeight = (collectionView.frame.size.height) 
+        let itemHeight = (collectionView.frame.size.height) * 0.8
 
         return CGSize(width: itemWidth, height: itemHeight)
     }
 
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//        UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
-//    }
-
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        return 3
-//    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 10, left: 5, bottom: 10, right: 10)
+    }
 }
 
+//MARK: - CollectionViewDataSource
 extension WelcomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.forecastColletionViewCellModels.count
@@ -267,37 +253,3 @@ extension WelcomeViewController: StoryboardInstantiable {
         return viewController
     }
 }
-
-
-
-
-
-//UIView.animate(withDuration: 1, delay: 0, options: .curveEaseOut, animations: {
-//    self.cityNameLabel.alpha = 0
-//    self.forecastTimeLabel.alpha = 0
-//    self.temperatureLabel.alpha = 0
-//    self.weatherImage.alpha = 0
-//    self.weatherDescriptionLabel.alpha = 0
-//    self.windSpeed.alpha = 0
-//    self.windDirection.alpha = 0
-//}) { (bool) in
-//    self.cityNameLabel.text = info.cityName
-//    let dateFormatter = DateFormatter()
-//    dateFormatter.locale = NSLocale.current
-//    dateFormatter.dateFormat = "dd-MMM HH:mm"
-//    self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-//    self.temperatureLabel.text = info.temperatureString
-//    self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
-//    self.weatherDescriptionLabel.text = info.conditionDescription
-//    self.windSpeed.text = info.windSpeedString
-//    self.windDirection.image = UIImage(systemName: info.windDirectionString)
-//
-//    UIView.animate(withDuration: 1, delay: 0, options: .curveEaseIn, animations: {
-//        self.cityNameLabel.alpha = 1
-//        self.forecastTimeLabel.alpha = 1
-//        self.temperatureLabel.alpha = 1
-//        self.weatherImage.alpha = 1
-//        self.weatherDescriptionLabel.alpha = 1
-//        self.windSpeed.alpha = 1
-//        self.windDirection.alpha = 1
-//    }, completion: nil)

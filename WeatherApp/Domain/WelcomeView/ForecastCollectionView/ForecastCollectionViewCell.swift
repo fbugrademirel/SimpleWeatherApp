@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ForecastCollectionViewCell: UICollectionViewCell {
+final class ForecastCollectionViewCell: UICollectionViewCell {
 
     static let nibName = "ForecastCollectionViewCell"
 
@@ -33,7 +33,7 @@ class ForecastCollectionViewCell: UICollectionViewCell {
         temperatureLabel.text = viewModel.temperature
         let dateFormatter = DateFormatter()
         dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "dd-MMM HH:mm"
+        dateFormatter.dateFormat = "HH:mm"
         timeLabel.text = dateFormatter.string(from: viewModel.date)
     }
 }

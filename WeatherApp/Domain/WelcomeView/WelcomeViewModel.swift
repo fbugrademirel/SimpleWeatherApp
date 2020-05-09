@@ -13,7 +13,7 @@ final class WelcomeViewModel: NSObject {
 
     enum Action {
         case reloadCollectionView
-        case updateUI(for: ModelType)
+        case updateUI(with: CurrentWeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
     }
 
@@ -28,17 +28,10 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
-    var weatherInfo: CurrentWeatherModel? = nil {
+    var currentWeatherInfo: CurrentWeatherModel? = nil {
         didSet {
-            if let weatherInfo = weatherInfo {
-                didReceiveAction?(.updateUI(for: .currentWeather(weatherInfo)))
-            }
-        }
-    }
-    var forecastInfo: FiveDayForecastModel? = nil {
-        didSet {
-            if let forecastInfo = forecastInfo {
-                didReceiveAction?(.updateUI(for: .fiveDaysForecast(forecastInfo)))
+            if let weatherInfo = currentWeatherInfo {
+                didReceiveAction?(.updateUI(with: (weatherInfo)))
             }
         }
     }
@@ -47,8 +40,7 @@ final class WelcomeViewModel: NSObject {
             didReceiveAction?(.reloadCollectionView)
         }
     }
-
-    var didReceiveAction: ((Action)-> Void)? = nil
+    var didReceiveAction: ((Action)-> Void)?
 
     func viewDidLoad() {
         locationManager.delegate = self
@@ -73,32 +65,11 @@ final class WelcomeViewModel: NSObject {
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
 
-    private func updateForecastWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
-        weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
-            guard let self = self, let forecastData = forecastData else { return }
-
-            var forecastList  = [Forecast]()
-            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
-                let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
-                                        temperatureDouble: forecastWeatherData.main.temp,
-                                        conditionID: forecastWeatherData.weather[0].id)
-                forecastList.append(forecast)
-                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
-                                                                temperature: forecast.temperatureString,
-                                                                date: forecast.date)
-                return viewModel
-            }
-            self.forecastInfo = FiveDayForecastModel(forecastList: forecastList, cityName: forecastData.city.name)
-            self.forecastColletionViewCellModels = forecastCellViewModels
-        }
-    }
-
-
     private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
-                self.weatherInfo = CurrentWeatherModel(date: Date(timeIntervalSince1970: data.dt),
+                self.currentWeatherInfo = CurrentWeatherModel(date: Date(timeIntervalSince1970: data.dt),
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
@@ -106,6 +77,23 @@ final class WelcomeViewModel: NSObject {
                                                 windDirectionInt: data.wind.deg ?? 0,
                                                 temperatureDouble: data.main.temp)
             }
+        }
+    }
+
+    private func updateForecastWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
+            guard let self = self, let forecastData = forecastData else { return }
+
+            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
+                let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
+                                        temperatureDouble: forecastWeatherData.main.temp,
+                                        conditionID: forecastWeatherData.weather[0].id)
+                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
+                                                                temperature: forecast.temperatureString,
+                                                                date: forecast.date)
+                return viewModel
+            }
+            self.forecastColletionViewCellModels = forecastCellViewModels
         }
     }
 }
