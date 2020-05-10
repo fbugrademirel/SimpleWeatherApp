@@ -98,6 +98,13 @@
 			path = CityTableView;
 			sourceTree = "<group>";
 		};
+		1331D36F24687417006CF0F9 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		135C452624621B0700C727ED /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -135,6 +142,7 @@
 		13BD7F68244730EC00762BDD /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				1331D36F24687417006CF0F9 /* New Group */,
 				13BD7F912448A82100762BDD /* Domain */,
 				13BD7F952448C6BE00762BDD /* Repositories */,
 				13BD7F882447A62200762BDD /* API */,

@@ -75,7 +75,7 @@ final class WelcomeViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
         // Slider
-        let thumbImage = UIImage(systemName: "arrow.up")!.withRenderingMode(.alwaysTemplate)
+        let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
         dayForecastSlider.setThumbImage(thumgImageForSliding, for: .highlighted)
