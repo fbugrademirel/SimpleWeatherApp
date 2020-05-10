@@ -28,6 +28,8 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var fillingView: UIView!
     @IBOutlet private var bottomButtonsStackView: UIStackView!
     @IBOutlet private var buttons: [UIButton]!
+    @IBOutlet private var dayForecastSlider: UISlider!
+  //  @IBOutlet private var dayForecastLabel: UILabel!
 
     var viewModel: WelcomeViewModel!
 
@@ -56,6 +58,16 @@ final class WelcomeViewController: UIViewController {
 
     private func setUI() {
 
+        // Slider
+
+        let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
+        let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
+
+        dayForecastSlider.setThumbImage(thumbImage, for: .normal)
+        dayForecastSlider.setThumbImage(thumgImageForSliding, for: .highlighted)
+        dayForecastSlider.tintColor = .systemBackground
+
+
         // Labels
         cityNameLabel.textColor = AppColor.primary
         forecastTimeLabel.textColor = AppColor.primary
@@ -73,7 +85,6 @@ final class WelcomeViewController: UIViewController {
         }
 
         //scroll view
-
         containerScrollView.delegate = self
 
         // Images
@@ -138,13 +149,13 @@ final class WelcomeViewController: UIViewController {
                 self.fillingView.alpha = 0
             }) { _ in
                 self.collectionView.reloadData()
-                self.transformCells(view: self.collectionView)
+                self.transformCells(scrollView: self.collectionView)
                 UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
                     self.collectionView.alpha = 1
                     self.fillingView.alpha = 1
                 }) { _ in
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                        self.transformCells(view: self.collectionView)
+                        self.transformCells(scrollView: self.collectionView)
                         self.collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
                     }, completion: nil)
                 }
@@ -171,8 +182,22 @@ final class WelcomeViewController: UIViewController {
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
 
-    private func transformCells(view: UIScrollView) {
-        let centerX = view.contentOffset.x + view.frame.size.width/2
+    private func lockForUpwardsScroll(scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > 0 {
+            scrollView.contentOffset.y = 0
+        }
+    }
+
+    private func setSliderPosition(scrollView: UIScrollView) {
+        let indexPosition =  scrollView.contentOffset.x / (scrollView.contentSize.width - collectionView.frame.width)
+
+        dayForecastSlider.setValue(Float(indexPosition * 100), animated: true)
+
+    }
+
+    private func transformCells(scrollView: UIScrollView) {
+        // centerX is the middle point of collectionView
+        let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
         for cell in collectionView.visibleCells {
             // offsetX is the distance between cell center and the centerX(middle point)
             var offsetX = centerX - cell.center.x
@@ -200,12 +225,12 @@ final class WelcomeViewController: UIViewController {
 extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
-            if scrollView.contentOffset.y > 0 {
-                scrollView.contentOffset.y = 0
-            }
+            lockForUpwardsScroll(scrollView: scrollView)
         } else if scrollView == collectionView {
-            // centerX is the middle point of collectionView
-            transformCells(view: scrollView)
+            transformCells(scrollView: scrollView)
+            if !dayForecastSlider.isHighlighted {
+                setSliderPosition(scrollView: scrollView)
+            }
         }
     }
 }
