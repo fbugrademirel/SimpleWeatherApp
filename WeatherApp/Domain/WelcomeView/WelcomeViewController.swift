@@ -28,6 +28,8 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var fillingView: UIView!
     @IBOutlet private var bottomButtonsStackView: UIStackView!
     @IBOutlet private var buttons: [UIButton]!
+    @IBOutlet private var dayForecastSlider: UISlider!
+    @IBOutlet private var dayIndicator: UILabel!
 
     var viewModel: WelcomeViewModel!
 
@@ -52,9 +54,35 @@ final class WelcomeViewController: UIViewController {
         viewModel.citySearchRequired()
     }
 
-    //MARK: - UI
+    //MARK: - objc
+    @objc func slideToCell (sender: UISlider) {
+        let index = (collectionView.contentSize.width - collectionView.frame.width) / 100
+        let point = CGPoint(x: index * CGFloat(sender.value), y: collectionView.contentOffset.y)
+        collectionView.setContentOffset(point, animated: false)
+        transformCells(scrollView: collectionView)
+    }
 
+    @objc func changeThumbLocation(sender: UITapGestureRecognizer) {
+        let pointTouched = sender.location(ofTouch: 0, in: dayForecastSlider)
+        let index = pointTouched.x / dayForecastSlider.frame.width
+        dayForecastSlider.setValue(Float(index * 100), animated: true)
+        let x = (collectionView.contentSize.width - collectionView.frame.width) / 100
+        let point = CGPoint(x: (x * CGFloat(dayForecastSlider.value)), y: collectionView.contentOffset.y)
+        collectionView.setContentOffset(point, animated: false)
+        transformCells(scrollView: collectionView)
+    }
+
+    //MARK: - UI
     private func setUI() {
+        // Slider
+        let thumbImage = UIImage(systemName: "arrow.up")!.withRenderingMode(.alwaysTemplate)
+        let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
+        dayForecastSlider.setThumbImage(thumbImage, for: .normal)
+        dayForecastSlider.setThumbImage(thumgImageForSliding, for: .highlighted)
+        dayForecastSlider.tintColor = .systemBackground
+        dayForecastSlider.addTarget(self, action: #selector(slideToCell(sender:)), for: .valueChanged)
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(changeThumbLocation(sender:)))
+        dayForecastSlider.addGestureRecognizer(gesture)
 
         // Labels
         cityNameLabel.textColor = AppColor.primary
@@ -73,7 +101,6 @@ final class WelcomeViewController: UIViewController {
         }
 
         //scroll view
-
         containerScrollView.delegate = self
 
         // Images
@@ -81,7 +108,7 @@ final class WelcomeViewController: UIViewController {
         windDirection.tintColor = AppColor.primary
         windImage.tintColor = AppColor.primary
 
-        // Nav. Bar
+        // Nav.Bar
         navigationController?.navigationBar.isHidden = true
 
         // Bottom StackView
@@ -138,13 +165,13 @@ final class WelcomeViewController: UIViewController {
                 self.fillingView.alpha = 0
             }) { _ in
                 self.collectionView.reloadData()
-                self.transformCells(view: self.collectionView)
+                self.transformCells(scrollView: self.collectionView)
                 UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
                     self.collectionView.alpha = 1
                     self.fillingView.alpha = 1
                 }) { _ in
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                        self.transformCells(view: self.collectionView)
+                        self.transformCells(scrollView: self.collectionView)
                         self.collectionView.scrollToItem(at: IndexPath(item: 2, section: 0), at: .centeredHorizontally, animated: true)
                     }, completion: nil)
                 }
@@ -171,28 +198,15 @@ final class WelcomeViewController: UIViewController {
        self.windDirection.image = UIImage(systemName: info.windDirectionString)
     }
 
-    private func transformCells(view: UIScrollView) {
-        let centerX = view.contentOffset.x + view.frame.size.width/2
-        for cell in collectionView.visibleCells {
-            // offsetX is the distance between cell center and the centerX(middle point)
-            var offsetX = centerX - cell.center.x
-            // Make offsetX positive if negative
-            offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
-            // original cell
-            cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-
-            // if the offset is bigger than 50, calculate a scale value and transform
-            if offsetX > 50 {
-               let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
-               var scaleX = 1-offsetPercentage
-
-               if scaleX < 0.8 {
-                   scaleX = 0.8
-
-                }
-               cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
-            }
-        }
+    private func setDayIndicator(value: CGFloat) {
+        let index = collectionView.contentSize.width / CGFloat(viewModel.forecastColletionViewCellModels.count)
+        let pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
+        let fixedPointer = pointer < 0 ? 0 : pointer
+        let date = viewModel.forecastColletionViewCellModels[fixedPointer].date
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale.current
+        dateFormatter.dateFormat = "dd MMM HH:mm"
+        self.dayIndicator.text = dateFormatter.string(from: date)
     }
 }
 
@@ -200,12 +214,49 @@ final class WelcomeViewController: UIViewController {
 extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
-            if scrollView.contentOffset.y > 0 {
-                scrollView.contentOffset.y = 0
-            }
+            lockForUpwardsScroll(scrollView: scrollView)
         } else if scrollView == collectionView {
-            // centerX is the middle point of collectionView
-            transformCells(view: scrollView)
+            transformCells(scrollView: scrollView)
+            if !dayForecastSlider.isHighlighted {
+                setSliderPosition(scrollView: scrollView)
+            }
+            setDayIndicator(value: scrollView.contentOffset.x)
+        }
+    }
+
+    private func lockForUpwardsScroll(scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > 0 {
+            scrollView.contentOffset.y = 0
+        }
+    }
+
+    private func setSliderPosition(scrollView: UIScrollView) {
+        let indexPosition =  scrollView.contentOffset.x / (scrollView.contentSize.width - collectionView.frame.width)
+        dayForecastSlider.setValue(Float(indexPosition * 100), animated: true)
+    }
+
+    private func transformCells(scrollView: UIScrollView) {
+       // centerX is the middle point of collectionView
+        let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
+        for cell in collectionView.visibleCells {
+
+           // offsetX is the distance between cell center and the centerX(middle point)
+                var offsetX = centerX - cell.center.x
+           // Make offsetX positive if negative
+                offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
+           // original cell
+                cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+
+           // if the offset is bigger than 50, calculate a scale value and transform
+            if offsetX > 50 {
+                let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
+                var scaleX = 1-offsetPercentage
+                if scaleX < 0.8 {
+                    scaleX = 0.8
+                }
+                cell.transform = CGAffineTransform(scaleX: scaleX, y: scaleX)
+                collectionView.layoutIfNeeded()
+            }
         }
     }
 }
@@ -216,7 +267,7 @@ extension WelcomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let collectionViewInset: CGFloat = 10
         let minimumInterimSpacing: CGFloat = 0
-        let numberOFCellsInPortraitMode = 4
+        let numberOFCellsInPortraitMode = 5
 
         let marginsAndInsets = (collectionViewInset * 2) + collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + (minimumInterimSpacing * CGFloat(numberOFCellsInPortraitMode - 1))
         let itemWidth = ((collectionView.bounds.size.width - marginsAndInsets) / CGFloat(numberOFCellsInPortraitMode)).rounded(.down)
