@@ -11,7 +11,5 @@ import Foundation
 class FavoriteCityCellTableViewCellViewModel {
 
 
-    
-
 
 }

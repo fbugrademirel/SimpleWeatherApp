@@ -6,7 +6,6 @@
 //  Copyright © 2020 F. Bugra Demirel. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import CoreData
 
@@ -82,6 +81,33 @@ final class CityListRepository {
             completion([])
         }
     }
+
+    func fetchFavoriteCities() {
+        do {
+            let request: NSFetchRequest<FavoriteCity> = FavoriteCity.fetchRequest()
+            let favorites = try context.fetch(request)
+            favorites.forEach { (favoriteCity) in
+                print(favoriteCity.cities)
+            }
+        } catch {
+            print(error)
+        }
+    }
+
+    func saveAsFavoriteCity(with id: Int) {
+        do {
+            let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+            let predicate = NSPredicate(format: "id == %i", id)
+            request.predicate = predicate
+            let city = try context.fetch(request)
+            let favoriteCity = FavoriteCity(context: context)
+            favoriteCity.addToCities(city[0]) 
+            try context.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
 }
 
 extension CityListRepository {

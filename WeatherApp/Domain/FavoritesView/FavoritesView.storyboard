@@ -15,24 +15,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9kq-8K-EHf">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="9kq-8K-EHf">
                                 <rect key="frame" x="6" y="50" width="402" height="806"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zfI-VF-2p4">
-                                <rect key="frame" x="184" y="438" width="46" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zfI-VF-2p4">
+                                <rect key="frame" x="6" y="433" width="402" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="buttonPressed:" destination="7HO-kV-lh1" eventType="touchUpInside" id="ZgB-by-EfZ"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="zfI-VF-2p4" firstAttribute="centerY" secondItem="IEV-W6-h7m" secondAttribute="centerY" id="3xu-7b-Vso"/>
-                            <constraint firstItem="zfI-VF-2p4" firstAttribute="centerX" secondItem="IEV-W6-h7m" secondAttribute="centerX" id="DNe-Wf-yOe"/>
                             <constraint firstItem="IEV-W6-h7m" firstAttribute="trailing" secondItem="9kq-8K-EHf" secondAttribute="trailing" constant="6" id="R1E-iI-HKx"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="top" secondItem="IEV-W6-h7m" secondAttribute="top" constant="6" id="Uej-m1-43o"/>
+                            <constraint firstItem="zfI-VF-2p4" firstAttribute="centerX" secondItem="9kq-8K-EHf" secondAttribute="centerX" id="o5n-pl-GDT"/>
                             <constraint firstItem="IEV-W6-h7m" firstAttribute="bottom" secondItem="9kq-8K-EHf" secondAttribute="bottom" constant="6" id="swi-zK-kdh"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="leading" secondItem="IEV-W6-h7m" secondAttribute="leading" constant="6" id="tJ8-gm-EUA"/>
                         </constraints>

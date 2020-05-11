@@ -11,27 +11,40 @@ import SwipeCellKit
 
 final class FavoritesViewController: UIViewController {
 
-    var testArray: [Int] = [1,2,3,4,5]
-
     var viewModel: FavoritesViewModel!
+
     @IBOutlet private var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "FavoriteCityCellTableViewCell", bundle: nil), forCellReuseIdentifier: "FavoriteCityCellTableViewCell")
-        tableView.separatorInset = .zero
-
+        viewModel.didReceivedAction = { [ weak self ] action in
+            self?.handle(action: action)
+        }
+        setUI()
     }
 
     @IBAction func buttonPressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
+
+    func handle(action: FavoritesViewModel.Action) {
+        switch action {
+        case .reload:
+            print("handled")
+        }
+    }
+
+    private func setUI() {
+        //TableView
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "FavoriteCityCellTableViewCell", bundle: nil), forCellReuseIdentifier: "FavoriteCityCellTableViewCell")
+        tableView.separatorInset = .zero
+    }
 }
 
-
+//MARK: - TableView DataSource
 extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCityCellTableViewCell") as! SwipeTableViewCell
@@ -40,24 +53,26 @@ extension FavoritesViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        testArray.count
+        viewModel.favoriteCities.count
     }
 }
 
+//MARK: - TableView Delegate
 extension FavoritesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
 }
 
-extension FavoritesViewController: SwipeTableViewCellDelegate {
 
+//MARK: - SwipeTableViewDelegate
+extension FavoritesViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
 
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             // handle action by updating model with deletion
-            self.testArray.remove(at: indexPath.row)
+            self.viewModel.favoriteCities.remove(at: indexPath.row)
             action.fulfill(with: .delete)
         }
 
@@ -75,8 +90,16 @@ extension FavoritesViewController: SwipeTableViewCellDelegate {
     }
 
 }
-//MARK: - StoryboardInstantiable
 
+//MARK: - SearchCity Delegate
+
+extension FavoritesViewController: SearchViewControllerDelegate {
+    func didSelectCity(_ id: Int) {
+        viewModel.updateFavoriteCities(id: id)
+    }
+}
+
+//MARK: - StoryboardInstantiable
 extension FavoritesViewController: StoryboardInstantiable {
     static var storyboardName: String {
         return "FavoritesView"

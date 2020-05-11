@@ -9,5 +9,16 @@
 import Foundation
 
 class FavoritesViewModel {
-    
+
+    let cityRepo = CityListRepository.shared
+
+    enum Action {
+        case reload
+    }
+    var didReceivedAction: ((Action) -> Void)?
+    var favoriteCities: [CityListRepository.City] = []
+
+    func updateFavoriteCities(id: Int) {
+        cityRepo.saveAsFavoriteCity(with: id)
+    }
 }

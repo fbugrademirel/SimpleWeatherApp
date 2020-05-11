@@ -46,6 +46,7 @@ final class WelcomeViewController: UIViewController {
         if !isLocationServicesEnabled() {
             viewModel.citySearchRequired()
         }
+        ///Users/Bugra/Library/Developer/CoreSimulator/Devices/49E41002-2BDB-4A37-BCB8-DCF39045B01C/data/Containers/Data/Application/664D00F0-B7B5-468D-9E13-7DC6B8CC79F9/Library/Application Support
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -71,6 +72,10 @@ final class WelcomeViewController: UIViewController {
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
         vc.modalPresentationStyle = .pageSheet
         navigationController?.present(vc, animated: true, completion: nil)
+    }
+
+    @IBAction func coreDataTEST(_ sender: UIButton) {
+        viewModel.cityRepo.fetchFavoriteCities()
     }
 
     //MARK: - objc

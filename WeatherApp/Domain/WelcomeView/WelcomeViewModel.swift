@@ -56,6 +56,7 @@ final class WelcomeViewModel: NSObject {
     func weatherInfoByCityIdRequired(with id: Int) {
         updateCurrentWeatherInfo(with: .id(id))
         updateForecastWeatherInfo(with: .id(id))
+        cityRepo.saveAsFavoriteCity(with: id)
     }
 
     func weatherForecastByCityIdRequired(with id: Int) {
