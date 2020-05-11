@@ -10,6 +10,7 @@ import UIKit
 
 struct AppColor {
     static let primary = UIColor(named: "primary")
+    static let secondary = UIColor(named: "secondary")
 }
 
 private extension UIColor {

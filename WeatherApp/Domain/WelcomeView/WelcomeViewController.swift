@@ -42,8 +42,20 @@ final class WelcomeViewController: UIViewController {
         }
         viewModel.viewDidLoad()
         setUI()
+
+        if !isLocationServicesEnabled() {
+            viewModel.citySearchRequired()
+        }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        print("VIEW DID DISAPPEARED")
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+    }
 
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
@@ -52,6 +64,13 @@ final class WelcomeViewController: UIViewController {
 
     @IBAction func searchButtonPressed(_ sender: UIButton) {
         viewModel.citySearchRequired()
+    }
+
+    @IBAction func favoritesButtonPressed(_ sender: UIButton) {
+        //Test
+        let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
+        vc.modalPresentationStyle = .pageSheet
+        navigationController?.present(vc, animated: true, completion: nil)
     }
 
     //MARK: - objc
@@ -201,13 +220,35 @@ final class WelcomeViewController: UIViewController {
 
     private func setForecastDayIndicator(value: CGFloat) {
         let index = collectionView.contentSize.width / CGFloat(viewModel.forecastColletionViewCellModels.count)
-        let pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
-        let fixedPointer = pointer < 0 ? 0 : pointer
-        let date = viewModel.forecastColletionViewCellModels[fixedPointer].date
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "dd MMM HH:mm"
-        self.dayIndicator.text = dateFormatter.string(from: date)
+        var pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
+        if pointer < 0 {
+            pointer = 0
+        } else if pointer > viewModel.forecastColletionViewCellModels.count - 1 {
+            pointer = 0
+        }
+        if !viewModel.forecastColletionViewCellModels.isEmpty {
+            let date = viewModel.forecastColletionViewCellModels[pointer].date
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "dd MMM HH:mm"
+            self.dayIndicator.text = dateFormatter.string(from: date)
+
+        }
+    }
+
+    private func isLocationServicesEnabled() -> Bool {
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                return false
+            case .authorizedAlways, .authorizedWhenInUse:
+                return true
+            @unknown default:
+                return false
+            }
+        } else {
+            return false
+        }
     }
 }
 
