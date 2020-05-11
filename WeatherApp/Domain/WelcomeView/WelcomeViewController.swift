@@ -186,19 +186,20 @@ final class WelcomeViewController: UIViewController {
     }
 
     private func updateCurrentWeatherUIelements(with info: WelcomeViewModel.CurrentWeatherModel) {
-       self.cityNameLabel.text = info.cityName
-       let dateFormatter = DateFormatter()
-       dateFormatter.locale = NSLocale.current
-       dateFormatter.dateFormat = "dd MMM HH:mm"
-       self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-       self.temperatureLabel.text = info.temperatureString
-       self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
-       self.weatherDescriptionLabel.text = info.conditionDescription
-       self.windSpeed.text = info.windSpeedString
-       self.windDirection.image = UIImage(systemName: info.windDirectionString)
+        self.cityNameLabel.text = info.cityName
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale.current
+        dateFormatter.dateFormat = "dd MMM HH:mm"
+        self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
+        self.temperatureLabel.text = info.temperatureString
+        self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
+        self.weatherDescriptionLabel.text = info.conditionDescription
+        self.windSpeed.text = info.windSpeedString
+        self.windDirection.image = UIImage(systemName: info.windDirectionStringForSFImage)
+        windDirection.transform  = CGAffineTransform(rotationAngle: CGFloat(info.windDirectionInt))
     }
 
-    private func setDayIndicator(value: CGFloat) {
+    private func setForecastDayIndicator(value: CGFloat) {
         let index = collectionView.contentSize.width / CGFloat(viewModel.forecastColletionViewCellModels.count)
         let pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
         let fixedPointer = pointer < 0 ? 0 : pointer
@@ -220,7 +221,7 @@ extension WelcomeViewController: UIScrollViewDelegate {
             if !dayForecastSlider.isHighlighted {
                 setSliderPosition(scrollView: scrollView)
             }
-            setDayIndicator(value: scrollView.contentOffset.x)
+            setForecastDayIndicator(value: scrollView.contentOffset.x)
         }
     }
 
@@ -239,14 +240,12 @@ extension WelcomeViewController: UIScrollViewDelegate {
        // centerX is the middle point of collectionView
         let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
         for cell in collectionView.visibleCells {
-
            // offsetX is the distance between cell center and the centerX(middle point)
                 var offsetX = centerX - cell.center.x
            // Make offsetX positive if negative
                 offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
            // original cell
                 cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-
            // if the offset is bigger than 50, calculate a scale value and transform
             if offsetX > 50 {
                 let offsetPercentage = (offsetX - 50) / collectionView.bounds.width

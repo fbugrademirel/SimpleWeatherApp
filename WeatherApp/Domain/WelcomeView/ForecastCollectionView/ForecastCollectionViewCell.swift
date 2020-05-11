@@ -43,7 +43,8 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "HH:mm"
         timeLabel.text = dateFormatter.string(from: viewModel.date)
-        windDirection.image = UIImage(systemName: viewModel.windDirection)
+        windDirection.image = UIImage(systemName: viewModel.windDirectionStringForSGIcon)
+        windDirection.transform = CGAffineTransform(rotationAngle: CGFloat(viewModel.windAngle))
         windSpeed.text = viewModel.windSpeed
     }
 }

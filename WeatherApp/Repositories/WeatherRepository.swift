@@ -127,7 +127,7 @@ final class WeatherRepository {
                     let isEqual = (each.city.coord.lat.rounded() == coordinates.coordinate.latitude.rounded()) && (each.city.coord.lon.rounded() == coordinates.coordinate.longitude.rounded()) // Coordinates are equal
                     let isEqualandUptoDate: Bool = isEqual && (Date().timeIntervalSince1970 - each.list[0].dt) > 6000 //6000 seconds = 100 minutes
                     if isEqualandUptoDate {
-                        currentWeathers.remove(at: index)
+                        currentForecasts.remove(at: index)
                         isOutOfDate = true
                         break
                     } else if (each.city.coord.lat.rounded() == coordinates.coordinate.latitude.rounded())

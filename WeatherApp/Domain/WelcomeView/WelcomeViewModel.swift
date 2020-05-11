@@ -17,6 +17,7 @@ final class WelcomeViewModel: NSObject {
         case presentSearchView(viewModel: SearchViewModel)
     }
 
+    var isFetchingCiy: Bool = true
     let cityRepo = CityListRepository.shared
     let weatherRepo = WeatherRepository.shared
     var locationManager = CLLocationManager()
@@ -94,7 +95,8 @@ final class WelcomeViewModel: NSObject {
                                                                 temperature: forecast.temperatureString,
                                                                 date: forecast.date,
                                                                 windSpeed: forecast.windSpeedString,
-                                                                windDirection: forecast.windDirectionForSFIcons)
+                                                                windDirectionStringForSFIcon: forecast.windDirectionStringForSFImage,
+                                                                windAngle: forecast.windDirection)
                 return viewModel
             }
             self.forecastColletionViewCellModels = forecastCellViewModels
@@ -134,9 +136,8 @@ extension WelcomeViewModel {
             return String(format: "%.0f", windSpeedDouble * 3.6) // in km/h
         }
         let windDirectionInt: Int
-        var windDirectionString: String {
-            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirectionInt)
-        }
+        let windDirectionStringForSFImage = "arrow.up"
+
         let temperatureDouble: Double
         var temperatureString: String {
             return String(format: "%.0f", temperatureDouble)
@@ -167,9 +168,7 @@ extension WelcomeViewModel {
             return String(format: "%.0f", windSpeed * 3.6) // in km/h
         }
         let windDirection: Int
-        var windDirectionForSFIcons: String {
-            CommonWeatherModelOpearaions.getSFIconsForWindDirection(windDirection)
-        }
+        let windDirectionStringForSFImage = "arrow.up"
     }
 
     struct CommonWeatherModelOpearaions {
@@ -199,28 +198,28 @@ extension WelcomeViewModel {
                 return "cloud"
             }
         }
-        static func getSFIconsForWindDirection(_ degree: Int) -> String {
-            switch degree {
-            case 23 ... 68:
-                return "arrow.down.left"
-            case 69 ... 112:
-                return "arrow.left"
-            case 113 ... 157:
-                return "arrow.up.left"
-            case 158 ... 202:
-                return "arrow.up"
-            case 203 ... 247:
-                return "arrow.up.right"
-            case 248 ... 293:
-                return "arrow.right"
-            case 294 ... 337:
-                return "arrow.down.right"
-            case (338 ... 359), (0 ... 23):
-                return "arrow.down"
-            default:
-                return "arrow.down"
-            }
-        }
+//        static func getSFIconsForWindDirection(_ degree: Int) -> String {
+//            switch degree {
+//            case 23 ... 68:
+//                return "arrow.down.left"
+//            case 69 ... 112:
+//                return "arrow.left"
+//            case 113 ... 157:
+//                return "arrow.up.left"
+//            case 158 ... 202:
+//                return "arrow.up"
+//            case 203 ... 247:
+//                return "arrow.up.right"
+//            case 248 ... 293:
+//                return "arrow.right"
+//            case 294 ... 337:
+//                return "arrow.down.right"
+//            case (338 ... 359), (0 ... 23):
+//                return "arrow.down"
+//            default:
+//                return "arrow.down"
+//            }
+//        }
     }
 }
 

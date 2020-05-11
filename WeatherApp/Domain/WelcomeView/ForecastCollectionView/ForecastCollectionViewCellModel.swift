@@ -14,14 +14,16 @@ final class ForecastCollectionViewCellModel {
     let temperature: String
     let date: Date
     let windSpeed: String
-    let windDirection: String
+    let windAngle: Int
+    let windDirectionStringForSGIcon: String
 
-    init(imageString: String, temperature: String, date: Date, windSpeed: String, windDirection: String) {
+    init(imageString: String, temperature: String, date: Date, windSpeed: String, windDirectionStringForSFIcon: String, windAngle: Int) {
         self.imageString = imageString
         self.temperature = temperature
         self.date = date
         self.windSpeed = windSpeed
-        self.windDirection = windDirection
+        self.windDirectionStringForSGIcon = windDirectionStringForSFIcon
+        self.windAngle = windAngle
     }
 
 }
