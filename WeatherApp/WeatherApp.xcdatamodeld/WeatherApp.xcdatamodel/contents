@@ -8,16 +8,12 @@
     <entity name="CityListItem" representedClassName="CityListItem" syncable="YES" codeGenerationType="class">
         <attribute name="country" attributeType="String"/>
         <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" customClassName="."/>
+        <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="coord" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CityCoord" inverseName="parentCity" inverseEntity="CityCoord"/>
-        <relationship name="newRelationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="FavoriteCity" inverseName="cities" inverseEntity="FavoriteCity"/>
-    </entity>
-    <entity name="FavoriteCity" representedClassName="FavoriteCity" syncable="YES" codeGenerationType="class">
-        <relationship name="cities" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CityListItem" inverseName="newRelationship" inverseEntity="CityListItem"/>
     </entity>
     <elements>
         <element name="CityCoord" positionX="-200.22265625" positionY="-304.68359375" width="128" height="88"/>
-        <element name="CityListItem" positionX="-356.4609375" positionY="-469.1640625" width="128" height="118"/>
-        <element name="FavoriteCity" positionX="-592.4375" positionY="-458.54296875" width="128" height="58"/>
+        <element name="CityListItem" positionX="-584.484375" positionY="-481.5859375" width="128" height="118"/>
     </elements>
 </model>

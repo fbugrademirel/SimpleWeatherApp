@@ -84,10 +84,12 @@ final class CityListRepository {
 
     func fetchFavoriteCities() {
         do {
-            let request: NSFetchRequest<FavoriteCity> = FavoriteCity.fetchRequest()
+            let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+            let predicate = NSPredicate(format: "isFavorite == YES")
+            request.predicate = predicate
             let favorites = try context.fetch(request)
             favorites.forEach { (favoriteCity) in
-                print(favoriteCity.cities)
+                print(favoriteCity)
             }
         } catch {
             print(error)
@@ -100,8 +102,7 @@ final class CityListRepository {
             let predicate = NSPredicate(format: "id == %i", id)
             request.predicate = predicate
             let city = try context.fetch(request)
-            let favoriteCity = FavoriteCity(context: context)
-            favoriteCity.addToCities(city[0]) 
+            city[0].setValue(true, forKey: "isFavorite")
             try context.save()
         } catch {
             print(error.localizedDescription)
