@@ -13,10 +13,13 @@ private let context = (UIApplication.shared.delegate as! AppDelegate).persistent
 
 final class CityListRepository {
 
-    static let shared = CityListRepository()
+    private(set) var favoriteCities: [CityListItem] = []
 
+    static let shared = CityListRepository()
     /// Initializer reads and saves the json file to coredata if the core data is empty.
     init() {
+
+        favoriteCities = fetchFavoriteCities()
         var isEmpty: Bool {
             do {
                 let request = NSFetchRequest<CityListItem>(entityName: "CityListItem")
@@ -82,17 +85,17 @@ final class CityListRepository {
         }
     }
 
-    func fetchFavoriteCities() {
+    @discardableResult func fetchFavoriteCities() -> [CityListItem] {
         do {
             let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
             let predicate = NSPredicate(format: "isFavorite == YES")
             request.predicate = predicate
             let favorites = try context.fetch(request)
-            favorites.forEach { (favoriteCity) in
-                print(favoriteCity)
-            }
+            favoriteCities = favorites
+             return favorites
         } catch {
             print(error)
+            return []
         }
     }
 
@@ -104,11 +107,15 @@ final class CityListRepository {
             let city = try context.fetch(request)
             city[0].setValue(true, forKey: "isFavorite")
             try context.save()
+            updateFavoriteCities()
         } catch {
             print(error.localizedDescription)
         }
     }
 
+    private func updateFavoriteCities() {
+        fetchFavoriteCities()
+    }
 }
 
 extension CityListRepository {

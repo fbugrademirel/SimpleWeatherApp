@@ -69,9 +69,9 @@ final class WelcomeViewController: UIViewController {
     @IBAction func favoritesButtonPressed(_ sender: UIButton) {
         //Test
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
-        vc.modalPresentationStyle = .pageSheet
         navigationController?.present(vc, animated: true, completion: nil)
     }
+
 
     @IBAction func coreDataTEST(_ sender: UIButton) {
         viewModel.cityRepo.fetchFavoriteCities()

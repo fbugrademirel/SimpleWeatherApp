@@ -15,12 +15,12 @@ private let context = (UIApplication.shared.delegate as! AppDelegate).persistent
 
 final class WeatherRepository {
 
-    private(set) var currentWeathers = [WeatherDataAPI.CurrentWeatherData]()
-    private(set) var currentForecasts = [WeatherDataAPI.ForecastData]()
+    private var currentWeathers = [WeatherDataAPI.CurrentWeatherData]()
+    private var currentForecasts = [WeatherDataAPI.ForecastData]()
 
     static let shared = WeatherRepository()
 
-    func getCurrentWeatherInfo(with locationInformation: LocationInformation, for completion: @escaping (WeatherDataAPI.CurrentWeatherData?) -> Void) {
+    func        getCurrentWeatherInfo(with locationInformation: LocationInformation, for completion: @escaping (WeatherDataAPI.CurrentWeatherData?) -> Void) {
 
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false

@@ -31,10 +31,11 @@ final class FavoritesViewController: UIViewController {
     func handle(action: FavoritesViewModel.Action) {
         switch action {
         case .reload:
-            print("handled")
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
-
     private func setUI() {
         //TableView
         tableView.delegate = self
@@ -47,20 +48,30 @@ final class FavoritesViewController: UIViewController {
 //MARK: - TableView DataSource
 extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCityCellTableViewCell") as! SwipeTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCityCellTableViewCell", for: indexPath) as! FavoriteCityCellTableViewCell
         cell.delegate = self
+        cell.viewModel = viewModel.favoriteCityCellViewModels[indexPath.row]
         return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.favoriteCities.count
+        return viewModel.favoriteCityCellViewModels.count
     }
 }
 
 //MARK: - TableView Delegate
 extension FavoritesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return 80
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.alpha = 0
+        UIView.animate(withDuration: 0.5,
+                       delay: 0.05 * Double(indexPath.row),
+                       animations: {
+                        cell.alpha = 1
+        })
     }
 }
 

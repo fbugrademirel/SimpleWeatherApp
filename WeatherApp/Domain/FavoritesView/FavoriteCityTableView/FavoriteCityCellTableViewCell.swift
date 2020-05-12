@@ -9,16 +9,31 @@
 import UIKit
 import SwipeCellKit
 
-class FavoriteCityCellTableViewCell: SwipeTableViewCell {
+final class FavoriteCityCellTableViewCell: SwipeTableViewCell {
 
-    var viewModel: FavoriteCityCellTableViewCellViewModel!
+    @IBOutlet private var cityName: UILabel!
+    @IBOutlet private var temperature: UILabel!
+    @IBOutlet private var conditionView: UIImageView!
+
+    var viewModel: FavoriteCityCellTableViewCellViewModel! {
+        didSet {
+            configure()
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
     }
 
     override func prepareForReuse() {
-        //
+        cityName.text = nil
+        temperature.text = nil
+        imageView?.image = nil
     }
-    
+
+    private func configure() {
+        cityName.text = viewModel.cityName
+        temperature.text = viewModel.temperatureString
+        conditionView.image = UIImage(systemName: viewModel.conditionNameForSFIcons)
+    }
 }

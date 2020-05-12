@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,21 +19,41 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="9kq-8K-EHf">
                                 <rect key="frame" x="6" y="50" width="402" height="806"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="Mw8-tT-hj2">
+                                    <rect key="frame" x="0.0" y="0.0" width="402" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Favorites" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGk-v3-MVC">
+                                            <rect key="frame" x="162.5" y="11.5" width="77.5" height="21.5"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                            <color key="textColor" name="primary"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <constraints>
+                                        <constraint firstItem="tGk-v3-MVC" firstAttribute="centerY" secondItem="Mw8-tT-hj2" secondAttribute="centerY" id="Je0-2D-Fk1"/>
+                                        <constraint firstItem="tGk-v3-MVC" firstAttribute="centerX" secondItem="Mw8-tT-hj2" secondAttribute="centerX" id="hYG-Ks-Jda"/>
+                                    </constraints>
+                                </view>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zfI-VF-2p4">
-                                <rect key="frame" x="6" y="433" width="402" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1gA-pc-ErR">
+                                <rect key="frame" x="346" y="56" width="50" height="32"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Cancel"/>
                                 <connections>
-                                    <action selector="buttonPressed:" destination="7HO-kV-lh1" eventType="touchUpInside" id="ZgB-by-EfZ"/>
+                                    <action selector="buttonPressed:" destination="7HO-kV-lh1" eventType="touchUpInside" id="oHS-XO-2a0"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="9kq-8K-EHf" firstAttribute="centerX" secondItem="IEV-W6-h7m" secondAttribute="centerX" id="43M-NU-KhT"/>
+                            <constraint firstItem="1gA-pc-ErR" firstAttribute="top" secondItem="9kq-8K-EHf" secondAttribute="top" constant="6" id="Fy0-Mf-cMv"/>
                             <constraint firstItem="IEV-W6-h7m" firstAttribute="trailing" secondItem="9kq-8K-EHf" secondAttribute="trailing" constant="6" id="R1E-iI-HKx"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="top" secondItem="IEV-W6-h7m" secondAttribute="top" constant="6" id="Uej-m1-43o"/>
-                            <constraint firstItem="zfI-VF-2p4" firstAttribute="centerX" secondItem="9kq-8K-EHf" secondAttribute="centerX" id="o5n-pl-GDT"/>
+                            <constraint firstItem="9kq-8K-EHf" firstAttribute="centerY" secondItem="IEV-W6-h7m" secondAttribute="centerY" id="bbs-qW-TEI"/>
+                            <constraint firstItem="1gA-pc-ErR" firstAttribute="trailing" secondItem="9kq-8K-EHf" secondAttribute="trailing" constant="-12" id="pH8-Lk-UdI"/>
                             <constraint firstItem="IEV-W6-h7m" firstAttribute="bottom" secondItem="9kq-8K-EHf" secondAttribute="bottom" constant="6" id="swi-zK-kdh"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="leading" secondItem="IEV-W6-h7m" secondAttribute="leading" constant="6" id="tJ8-gm-EUA"/>
                         </constraints>
@@ -47,4 +68,9 @@
             <point key="canvasLocation" x="-133.33333333333334" y="40.848214285714285"/>
         </scene>
     </scenes>
+    <resources>
+        <namedColor name="primary">
+            <color red="0.082000002264976501" green="0.017000000923871994" blue="0.75099998712539673" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
 </document>
