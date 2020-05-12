@@ -46,6 +46,9 @@
                                 </constraints>
                             </imageView>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="n5u-3G-lNl" firstAttribute="height" secondItem="bUI-Z1-LLB" secondAttribute="height" multiplier="0.797872" id="67H-3l-Qjo"/>
+                        </constraints>
                     </stackView>
                 </subviews>
                 <constraints>

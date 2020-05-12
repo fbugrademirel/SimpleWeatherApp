@@ -20,12 +20,12 @@ final class WeatherRepository {
 
     static let shared = WeatherRepository()
 
-    func        getCurrentWeatherInfo(with locationInformation: LocationInformation, for completion: @escaping (WeatherDataAPI.CurrentWeatherData?) -> Void) {
+    func getCurrentWeatherInfo(with locationInformation: LocationInformation, for completion: @escaping (WeatherDataAPI.CurrentWeatherData?) -> Void) {
 
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 
-        print("Current Weathers: \(currentWeathers)")
+      //  print("Current Weathers: \(currentWeathers)")
 
         if !currentWeathers.isEmpty {
             switch locationInformation {
@@ -103,7 +103,7 @@ final class WeatherRepository {
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 
-        print("Current Forecasts: \(currentForecasts)")
+//        print("Current Forecasts: \(currentForecasts)")
 
         if !currentForecasts.isEmpty {
             switch locationInformation {
