@@ -25,7 +25,6 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var windSpeedUnitIndicator: UILabel!
     @IBOutlet private var infoStackView: UIStackView!
     @IBOutlet private var collectionView: UICollectionView!
-    @IBOutlet private var fillingView: UIView!
     @IBOutlet private var bottomButtonsStackView: UIStackView!
     @IBOutlet private var buttons: [UIButton]!
     @IBOutlet private var dayForecastSlider: UISlider!
@@ -141,8 +140,8 @@ final class WelcomeViewController: UIViewController {
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
         //SizingView
-        fillingView.backgroundColor = AppColor.primary
-        fillingView.alpha = 0
+//        fillingView.backgroundColor = AppColor.primary
+//        fillingView.alpha = 0
 
         //CollectionView
         collectionView.layer.cornerRadius = 30
@@ -186,13 +185,11 @@ final class WelcomeViewController: UIViewController {
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseOut, animations: {
                 self.collectionView.alpha = 0
-                self.fillingView.alpha = 0
             }) { _ in
                 self.collectionView.reloadData()
                 self.transformCells(scrollView: self.collectionView)
                 UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
                     self.collectionView.alpha = 1
-                    self.fillingView.alpha = 1
                 }) { _ in
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                         self.transformCells(scrollView: self.collectionView)
