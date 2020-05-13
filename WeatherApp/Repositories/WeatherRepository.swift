@@ -15,8 +15,8 @@ private let context = (UIApplication.shared.delegate as! AppDelegate).persistent
 
 final class WeatherRepository {
 
-    private(set) var currentWeathers = [WeatherDataAPI.CurrentWeatherData]()
-    private(set) var currentForecasts = [WeatherDataAPI.ForecastData]()
+    private var currentWeathers = [WeatherDataAPI.CurrentWeatherData]()
+    private var currentForecasts = [WeatherDataAPI.ForecastData]()
 
     static let shared = WeatherRepository()
 
@@ -25,7 +25,7 @@ final class WeatherRepository {
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 
-        print("Current Weathers: \(currentWeathers)")
+      //  print("Current Weathers: \(currentWeathers)")
 
         if !currentWeathers.isEmpty {
             switch locationInformation {
@@ -103,7 +103,7 @@ final class WeatherRepository {
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 
-        print("Current Forecasts: \(currentForecasts)")
+//        print("Current Forecasts: \(currentForecasts)")
 
         if !currentForecasts.isEmpty {
             switch locationInformation {

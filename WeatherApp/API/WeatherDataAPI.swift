@@ -20,8 +20,6 @@ struct WeatherDataAPI {
 
         let url = setURL(locationInformation: locationInformation, forecastType: .current)
 
-        print("Current forecast url: \(url)")
-
         networkingService.dispatchRequest(urlString: url, method: .get) { result in
             switch result {
             case .success(let data):
@@ -46,8 +44,6 @@ struct WeatherDataAPI {
     func getForecastWeatherInfo(by locationInformation: LocationInformation, completion: @escaping ((Result<ForecastData, Error>) -> Void)) {
 
         let url = setURL(locationInformation: locationInformation, forecastType: .fiveDays)
-
-        print("5 days forecast url: \(url)")
 
         networkingService.dispatchRequest(urlString: url, method: .get) { result in
             switch result {

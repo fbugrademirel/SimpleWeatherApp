@@ -20,6 +20,7 @@ final class SearchViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var searchBar: UISearchBar!
 
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,6 +31,7 @@ final class SearchViewController: UIViewController {
         searchBar.becomeFirstResponder()
     }
 
+    //MARK: - Handle
     func handle(_ action: SearchViewModel.Action) {
         switch action {
         case .reload:
@@ -37,10 +39,12 @@ final class SearchViewController: UIViewController {
         }
     }
 
+    //MARK: - IBAction
     @IBAction func cancelButtonTapped(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
 
+    //MARK: - UI
     private func setUI() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -103,6 +107,14 @@ extension SearchViewController: UITableViewDataSource {
         return cell
     }
 
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.alpha = 0
+        UIView.animate(withDuration: 0.5,
+                       delay: 0.05 * Double(indexPath.row),
+                       animations: {
+                        cell.alpha = 1
+        })
+    }
 }
 
 

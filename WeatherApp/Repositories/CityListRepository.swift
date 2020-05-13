@@ -6,7 +6,6 @@
 //  Copyright © 2020 F. Bugra Demirel. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import CoreData
 
@@ -14,10 +13,13 @@ private let context = (UIApplication.shared.delegate as! AppDelegate).persistent
 
 final class CityListRepository {
 
-    static let shared = CityListRepository()
+    private(set) var favoriteCities: [CityListItem] = []
 
+    static let shared = CityListRepository()
     /// Initializer reads and saves the json file to coredata if the core data is empty.
     init() {
+
+        favoriteCities = fetchFavoriteCities()
         var isEmpty: Bool {
             do {
                 let request = NSFetchRequest<CityListItem>(entityName: "CityListItem")
@@ -81,6 +83,53 @@ final class CityListRepository {
             print("Error getting city info from core data \(error.localizedDescription)")
             completion([])
         }
+    }
+
+    @discardableResult func fetchFavoriteCities() -> [CityListItem] {
+        do {
+            let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+            let predicate = NSPredicate(format: "isFavorite == YES")
+            request.predicate = predicate
+            let favorites = try context.fetch(request)
+            favoriteCities = favorites
+             return favorites
+        } catch {
+            print(error)
+            return []
+        }
+    }
+
+    func saveAsFavoriteCity(with id: Int) {
+        do {
+            let city = try context.fetch(getUpdateRequestForFavoriteCity(with: id))
+            city[0].setValue(true, forKey: "isFavorite")
+            try context.save()
+            updateFavoriteCities()
+        } catch {
+            print("Error while selecting favorite city: \(error.localizedDescription)")
+        }
+    }
+
+    func saveAsUnfavoriteCity(with id: Int) {
+        do {
+            let city = try context.fetch(getUpdateRequestForFavoriteCity(with: id))
+            city[0].setValue(false, forKey: "isFavorite")
+            try context.save()
+            updateFavoriteCities()
+        } catch {
+            print("Error while deselecting favorite city: \(error.localizedDescription)")
+        }
+    }
+
+    private func getUpdateRequestForFavoriteCity(with id: Int) -> NSFetchRequest<CityListItem> {
+        let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+        let predicate = NSPredicate(format: "id == %i", id)
+        request.predicate = predicate
+        return request
+    }
+
+    private func updateFavoriteCities() {
+        fetchFavoriteCities()
     }
 }
 

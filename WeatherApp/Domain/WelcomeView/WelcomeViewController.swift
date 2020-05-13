@@ -6,6 +6,8 @@
 //  Copyright © 2020 F. Bugra Demirel. All rights reserved.
 //
 
+///Users/Bugra/Library/Developer/CoreSimulator/Devices/49E41002-2BDB-4A37-BCB8-DCF39045B01C/data/Containers/Data/Application/664D00F0-B7B5-468D-9E13-7DC6B8CC79F9/Library/Application Support
+
 import UIKit
 import CoreLocation
 
@@ -25,7 +27,6 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var windSpeedUnitIndicator: UILabel!
     @IBOutlet private var infoStackView: UIStackView!
     @IBOutlet private var collectionView: UICollectionView!
-    @IBOutlet private var fillingView: UIView!
     @IBOutlet private var bottomButtonsStackView: UIStackView!
     @IBOutlet private var buttons: [UIButton]!
     @IBOutlet private var dayForecastSlider: UISlider!
@@ -42,19 +43,11 @@ final class WelcomeViewController: UIViewController {
         }
         viewModel.viewDidLoad()
         setUI()
+        setConstraints()
 
         if !isLocationServicesEnabled() {
             viewModel.citySearchRequired()
         }
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        print("VIEW DID DISAPPEARED")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
     }
 
     //MARK: - IBAction
@@ -69,8 +62,8 @@ final class WelcomeViewController: UIViewController {
     @IBAction func favoritesButtonPressed(_ sender: UIButton) {
         //Test
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
-        vc.modalPresentationStyle = .pageSheet
-        navigationController?.present(vc, animated: true, completion: nil)
+        let navCon = UINavigationController(rootViewController: vc)
+        navigationController?.present(navCon, animated: true, completion: nil)
     }
 
     //MARK: - objc
@@ -89,6 +82,19 @@ final class WelcomeViewController: UIViewController {
         let point = CGPoint(x: (x * CGFloat(dayForecastSlider.value)), y: collectionView.contentOffset.y)
         collectionView.setContentOffset(point, animated: false)
         transformCells(scrollView: collectionView)
+    }
+
+    @objc func refresh(_ sender: AnyObject) {
+        guard let id = viewModel.currentWeatherInfo?.id else { return }
+        viewModel.weatherInfoByCityIdRequired(with: id)
+        refreshControl.alpha = 0
+        UIView.animate(withDuration: 1) {
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = UIImage(systemName: "arrow.up")
+            self.refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
+            self.refreshControl.alpha = 1
+        }
+        refreshControl.endRefreshing()
     }
 
     //MARK: - UI
@@ -121,6 +127,8 @@ final class WelcomeViewController: UIViewController {
 
         //scroll view
         containerScrollView.delegate = self
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        containerScrollView.addSubview(refreshControl)
 
         // Images
         weatherImage.tintColor = AppColor.primary
@@ -135,10 +143,6 @@ final class WelcomeViewController: UIViewController {
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
-        //SizingView
-        fillingView.backgroundColor = AppColor.primary
-        fillingView.alpha = 0
-
         //CollectionView
         collectionView.layer.cornerRadius = 30
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -150,6 +154,12 @@ final class WelcomeViewController: UIViewController {
         }
         collectionView.register(UINib(nibName: ForecastCollectionViewCell.nibName, bundle: nil), forCellWithReuseIdentifier: ForecastCollectionViewCell.nibName)
         collectionView.alpha = 0
+    }
+
+    private func setConstraints() {
+        NSLayoutConstraint.activate([
+              refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+              refreshControl.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 50)])
     }
 
     //MARK: - Operations
@@ -181,13 +191,11 @@ final class WelcomeViewController: UIViewController {
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.5, delay: 0.5, options: .curveEaseOut, animations: {
                 self.collectionView.alpha = 0
-                self.fillingView.alpha = 0
             }) { _ in
                 self.collectionView.reloadData()
                 self.transformCells(scrollView: self.collectionView)
                 UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseIn, animations: {
                     self.collectionView.alpha = 1
-                    self.fillingView.alpha = 1
                 }) { _ in
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                         self.transformCells(scrollView: self.collectionView)
@@ -250,7 +258,21 @@ final class WelcomeViewController: UIViewController {
             return false
         }
     }
+
+    //MARK: - Components
+    private let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = UIImage(systemName: "arrow.down")
+        refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
+        refreshControl.tintColor = .clear
+        refreshControl.layer.zPosition = -1
+        refreshControl.translatesAutoresizingMaskIntoConstraints = false
+        return refreshControl
+    }()
 }
+
+
 
 //MARK: - ScrollViewDelegate
 extension WelcomeViewController: UIScrollViewDelegate {

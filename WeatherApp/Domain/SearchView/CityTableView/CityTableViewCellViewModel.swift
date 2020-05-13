@@ -10,6 +10,7 @@ import Foundation
 
 final class CityTableViewCellViewModel {
 
+    //TODO: - For future use
     enum Action {
         case selectCity
     }
@@ -22,5 +23,6 @@ final class CityTableViewCellViewModel {
         self.searchString = searchString
     }
 
+    //TODO: - For future use
     var didReceiveAction: ((Action) -> Void)?
 }
