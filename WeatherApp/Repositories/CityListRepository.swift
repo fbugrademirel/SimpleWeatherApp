@@ -101,16 +101,31 @@ final class CityListRepository {
 
     func saveAsFavoriteCity(with id: Int) {
         do {
-            let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
-            let predicate = NSPredicate(format: "id == %i", id)
-            request.predicate = predicate
-            let city = try context.fetch(request)
+            let city = try context.fetch(getUpdateRequestForFavoriteCity(with: id))
             city[0].setValue(true, forKey: "isFavorite")
             try context.save()
             updateFavoriteCities()
         } catch {
-            print(error.localizedDescription)
+            print("Error while selecting favorite city: \(error.localizedDescription)")
         }
+    }
+
+    func saveAsUnfavoriteCity(with id: Int) {
+        do {
+            let city = try context.fetch(getUpdateRequestForFavoriteCity(with: id))
+            city[0].setValue(false, forKey: "isFavorite")
+            try context.save()
+            updateFavoriteCities()
+        } catch {
+            print("Error while deselecting favorite city: \(error.localizedDescription)")
+        }
+    }
+
+    private func getUpdateRequestForFavoriteCity(with id: Int) -> NSFetchRequest<CityListItem> {
+        let request: NSFetchRequest<CityListItem> = CityListItem.fetchRequest()
+        let predicate = NSPredicate(format: "id == %i", id)
+        request.predicate = predicate
+        return request
     }
 
     private func updateFavoriteCities() {

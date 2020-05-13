@@ -8,8 +8,9 @@
 
 import Foundation
 
-class FavoriteCityCellTableViewCellViewModel {
+final class FavoriteCityTableViewCellViewModel {
 
+    let id: Int
     let conditionID: Int
     let cityName: String
     let temperatureDouble: Double
@@ -21,7 +22,8 @@ class FavoriteCityCellTableViewCellViewModel {
         WelcomeViewModel.CommonWeatherModelOpearaions.getSFIconsForWeatherCondition(conditionID)
     }
 
-    init(cityName: String, temperature: Double, conditionID: Int) {
+    init(id: Int, cityName: String, temperature: Double, conditionID: Int) {
+        self.id = id
         self.cityName = cityName
         self.temperatureDouble = temperature
         self.conditionID = conditionID

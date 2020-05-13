@@ -17,11 +17,10 @@ final class WelcomeViewModel: NSObject {
         case presentSearchView(viewModel: SearchViewModel)
     }
 
-    var isFetchingCiy: Bool = true
-    let cityRepo = CityListRepository.shared
-    let weatherRepo = WeatherRepository.shared
-    var locationManager = CLLocationManager()
-    var location: CLLocation? = nil {
+    private let cityRepo = CityListRepository.shared
+    private let weatherRepo = WeatherRepository.shared
+    private var locationManager = CLLocationManager()
+    private var location: CLLocation? = nil {
         didSet {
             if let location = location {
                 updateCurrentWeatherInfo(with: .coordinates(location))
@@ -71,7 +70,8 @@ final class WelcomeViewModel: NSObject {
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
-                self.currentWeatherInfo = CurrentWeatherModel(date: Date(timeIntervalSince1970: data.dt),
+                self.currentWeatherInfo = CurrentWeatherModel(id: data.id,
+                                                date: Date(timeIntervalSince1970: data.dt),
                                                 conditionID: data.weather[0].id,
                                                 conditionDescription: data.weather[0].description,
                                                 cityName: data.name,
@@ -128,6 +128,7 @@ extension WelcomeViewModel {
     }
 
     struct CurrentWeatherModel {
+        let id: Int
         let date: Date
         let conditionID: Int
         let conditionDescription: String

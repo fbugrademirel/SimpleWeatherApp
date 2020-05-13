@@ -15,40 +15,74 @@ final class FavoritesViewController: UIViewController {
 
     @IBOutlet private var tableView: UITableView!
 
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         viewModel.didReceivedAction = { [ weak self ] action in
             self?.handle(action: action)
         }
+        viewModel.fetchFavoriteCityWeathers()
         setUI()
     }
 
-    @IBAction func buttonPressed(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    //MARK: - Handle
     func handle(action: FavoritesViewModel.Action) {
         switch action {
         case .reload:
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
+        case .presentSearchView(with: let viewModel):
+            presentSearchView(with: viewModel)
         }
     }
+
+    //MARK: - Objc
+    @objc func cancelButtonPressed() {
+        dismiss(animated: true, completion: nil)
+    }
+
+    @objc func addButtonPressed() {
+        viewModel.searchViewConrollerRequired()
+    }
+
+    //MARK: - UI
     private func setUI() {
+        //Nav.Bar.
+        title = "Favorites"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+
         //TableView
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: "FavoriteCityCellTableViewCell", bundle: nil), forCellReuseIdentifier: "FavoriteCityCellTableViewCell")
+        tableView.register(UINib(nibName: FavoriteCityTableViewCell.nibName, bundle: nil), forCellReuseIdentifier: FavoriteCityTableViewCell.nibName)
         tableView.separatorInset = .zero
+    }
+
+    private func presentSearchView(with viewModel: SearchViewModel) {
+        let vc = SearchViewController.instantiate(with: viewModel)
+        vc.delegate = self
+        navigationController?.present(vc, animated: true, completion: nil)
     }
 }
 
 //MARK: - TableView DataSource
 extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCityCellTableViewCell", for: indexPath) as! FavoriteCityCellTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCityTableViewCell.nibName, for: indexPath) as! FavoriteCityTableViewCell
         cell.delegate = self
         cell.viewModel = viewModel.favoriteCityCellViewModels[indexPath.row]
         return cell
@@ -56,6 +90,10 @@ extension FavoritesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.favoriteCityCellViewModels.count
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.1
     }
 }
 
@@ -83,7 +121,9 @@ extension FavoritesViewController: SwipeTableViewCellDelegate {
 
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             // handle action by updating model with deletion
-            self.viewModel.favoriteCities.remove(at: indexPath.row)
+            let id = self.viewModel.favoriteCityCellViewModels[indexPath.row].id
+            self.viewModel.updateFavoriteCities(id: id, updateType: .selectAsUnfavorite)
+            self.viewModel.favoriteCityCellViewModels.remove(at: indexPath.row)
             action.fulfill(with: .delete)
         }
 
@@ -106,7 +146,7 @@ extension FavoritesViewController: SwipeTableViewCellDelegate {
 
 extension FavoritesViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
-        viewModel.updateFavoriteCities(id: id)
+        viewModel.updateFavoriteCities(id: id, updateType: .selectAsFavorite)
     }
 }
 
