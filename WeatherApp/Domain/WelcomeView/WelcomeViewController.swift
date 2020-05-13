@@ -52,6 +52,24 @@ final class WelcomeViewController: UIViewController {
 
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
+        if !isLocationServicesEnabled() {
+            let alertController = UIAlertController(title: "This feature requires Location Services enabled", message: "Please change your settings under:\n Settings -> Privacy -> Location Services", preferredStyle: .actionSheet)
+            let settingsAction = UIAlertAction(title: "Go to Settings", style: .default) { _ in
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                    return
+                }
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { success in
+                        print("Settings opened: \(success)") // Prints true
+                    })
+                }
+            }
+            alertController.addAction(settingsAction)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+            present(alertController, animated: true, completion: nil)
+        }
+
         viewModel.weatherInfoByLocationRequired()
     }
 
@@ -64,6 +82,10 @@ final class WelcomeViewController: UIViewController {
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
         let navCon = UINavigationController(rootViewController: vc)
         navigationController?.present(navCon, animated: true, completion: nil)
+    }
+
+    @IBAction func settingsButtonPressed(_ sender: UIButton) {
+        
     }
 
     //MARK: - objc
@@ -85,8 +107,10 @@ final class WelcomeViewController: UIViewController {
     }
 
     @objc func refresh(_ sender: AnyObject) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
         guard let id = viewModel.currentWeatherInfo?.id else { return }
-        viewModel.weatherInfoByCityIdRequired(with: id)
+        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: true)
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
@@ -363,7 +387,7 @@ extension WelcomeViewController: UICollectionViewDataSource {
 
 extension WelcomeViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: id)
+        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: false)
     }
 }
 

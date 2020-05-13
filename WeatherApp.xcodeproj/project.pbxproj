@@ -133,6 +133,13 @@
 			path = ForecastCollectionView;
 			sourceTree = "<group>";
 		};
+		136708E4246C899700DA1746 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 		139DF0732469AA2600624470 /* FavoriteCityTableView */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,6 +174,7 @@
 				13BD7F912448A82100762BDD /* Domain */,
 				13BD7F952448C6BE00762BDD /* Repositories */,
 				13BD7F882447A62200762BDD /* API */,
+				136708E4246C899700DA1746 /* Manager */,
 				13BD7F80244731D500762BDD /* Utilities */,
 				13BD7F69244730EC00762BDD /* AppDelegate.swift */,
 				13BD7F6B244730EC00762BDD /* SceneDelegate.swift */,

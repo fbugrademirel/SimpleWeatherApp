@@ -44,15 +44,15 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
-                                                        <rect key="frame" x="126.66666666666666" y="270.33333333333331" width="110" height="57.333333333333314"/>
+                                                        <rect key="frame" x="160.33333333333334" y="270.33333333333331" width="42.666666666666657" height="57.333333333333314"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="-" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="i4h-jA-52r">
-                                                                <rect key="frame" x="0.0" y="0.0" width="55" height="57.333333333333336"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="21.333333333333332" height="57.333333333333336"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="°C" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="yKU-VP-Gdk">
-                                                                <rect key="frame" x="55" y="0.0" width="55" height="57.333333333333336"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="°" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="yKU-VP-Gdk">
+                                                                <rect key="frame" x="21.333333333333314" y="0.0" width="21.333333333333329" height="57.333333333333336"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
@@ -188,7 +188,7 @@
                                         </constraints>
                                         <state key="normal" image="dial" catalog="system"/>
                                         <connections>
-                                            <action selector="coreDataTEST:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7jx-nZ-DaJ"/>
+                                            <action selector="settingsButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aW6-KF-CyB"/>
                                         </connections>
                                     </button>
                                 </subviews>

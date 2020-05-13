@@ -52,10 +52,12 @@ final class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
-    func weatherInfoByCityIdRequired(with id: Int) {
+    func weatherInfoByCityIdRequired(with id: Int, isForRefresh: Bool) {
         updateCurrentWeatherInfo(with: .id(id))
         updateForecastWeatherInfo(with: .id(id))
-        cityRepo.saveAsFavoriteCity(with: id)
+        if !isForRefresh {
+            cityRepo.saveAsFavoriteCity(with: id)
+        }
     }
 
     func weatherForecastByCityIdRequired(with id: Int) {
@@ -200,28 +202,6 @@ extension WelcomeViewModel {
                 return "cloud"
             }
         }
-//        static func getSFIconsForWindDirection(_ degree: Int) -> String {
-//            switch degree {
-//            case 23 ... 68:
-//                return "arrow.down.left"
-//            case 69 ... 112:
-//                return "arrow.left"
-//            case 113 ... 157:
-//                return "arrow.up.left"
-//            case 158 ... 202:
-//                return "arrow.up"
-//            case 203 ... 247:
-//                return "arrow.up.right"
-//            case 248 ... 293:
-//                return "arrow.right"
-//            case 294 ... 337:
-//                return "arrow.down.right"
-//            case (338 ... 359), (0 ... 23):
-//                return "arrow.down"
-//            default:
-//                return "arrow.down"
-//            }
-//        }
     }
 }
 

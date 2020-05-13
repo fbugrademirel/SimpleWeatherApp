@@ -29,7 +29,7 @@ final class SearchViewModel {
     // FIXME: - For future use
     func handle(_ action: CityTableViewCellViewModel.Action) {
         switch action {
-        case .selectCity:
+        case .select:
             print("handled by search view model")
         }
     }
