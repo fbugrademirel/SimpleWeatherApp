@@ -42,8 +42,20 @@ final class WelcomeViewController: UIViewController {
         }
         viewModel.viewDidLoad()
         setUI()
+
+        if !isLocationServicesEnabled() {
+            viewModel.citySearchRequired()
+        }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        print("VIEW DID DISAPPEARED")
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+    }
 
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
@@ -52,6 +64,13 @@ final class WelcomeViewController: UIViewController {
 
     @IBAction func searchButtonPressed(_ sender: UIButton) {
         viewModel.citySearchRequired()
+    }
+
+    @IBAction func favoritesButtonPressed(_ sender: UIButton) {
+        //Test
+        let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
+        vc.modalPresentationStyle = .pageSheet
+        navigationController?.present(vc, animated: true, completion: nil)
     }
 
     //MARK: - objc
@@ -75,7 +94,7 @@ final class WelcomeViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
         // Slider
-        let thumbImage = UIImage(systemName: "arrow.up")!.withRenderingMode(.alwaysTemplate)
+        let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
         dayForecastSlider.setThumbImage(thumgImageForSliding, for: .highlighted)
@@ -186,27 +205,50 @@ final class WelcomeViewController: UIViewController {
     }
 
     private func updateCurrentWeatherUIelements(with info: WelcomeViewModel.CurrentWeatherModel) {
-       self.cityNameLabel.text = info.cityName
-       let dateFormatter = DateFormatter()
-       dateFormatter.locale = NSLocale.current
-       dateFormatter.dateFormat = "dd MMM HH:mm"
-       self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-       self.temperatureLabel.text = info.temperatureString
-       self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
-       self.weatherDescriptionLabel.text = info.conditionDescription
-       self.windSpeed.text = info.windSpeedString
-       self.windDirection.image = UIImage(systemName: info.windDirectionString)
-    }
-
-    private func setDayIndicator(value: CGFloat) {
-        let index = collectionView.contentSize.width / CGFloat(viewModel.forecastColletionViewCellModels.count)
-        let pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
-        let fixedPointer = pointer < 0 ? 0 : pointer
-        let date = viewModel.forecastColletionViewCellModels[fixedPointer].date
+        self.cityNameLabel.text = info.cityName
         let dateFormatter = DateFormatter()
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "dd MMM HH:mm"
-        self.dayIndicator.text = dateFormatter.string(from: date)
+        self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
+        self.temperatureLabel.text = info.temperatureString
+        self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
+        self.weatherDescriptionLabel.text = info.conditionDescription
+        self.windSpeed.text = info.windSpeedString
+        self.windDirection.image = UIImage(systemName: info.windDirectionStringForSFImage)
+        windDirection.transform  = CGAffineTransform(rotationAngle: CGFloat(info.windDirectionInt))
+    }
+
+    private func setForecastDayIndicator(value: CGFloat) {
+        let index = collectionView.contentSize.width / CGFloat(viewModel.forecastColletionViewCellModels.count)
+        var pointer = Int(((value + (collectionView.frame.width/2)) / index).rounded(.towardZero))
+        if pointer < 0 {
+            pointer = 0
+        } else if pointer > viewModel.forecastColletionViewCellModels.count - 1 {
+            pointer = 0
+        }
+        if !viewModel.forecastColletionViewCellModels.isEmpty {
+            let date = viewModel.forecastColletionViewCellModels[pointer].date
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "dd MMM HH:mm"
+            self.dayIndicator.text = dateFormatter.string(from: date)
+
+        }
+    }
+
+    private func isLocationServicesEnabled() -> Bool {
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                return false
+            case .authorizedAlways, .authorizedWhenInUse:
+                return true
+            @unknown default:
+                return false
+            }
+        } else {
+            return false
+        }
     }
 }
 
@@ -220,7 +262,7 @@ extension WelcomeViewController: UIScrollViewDelegate {
             if !dayForecastSlider.isHighlighted {
                 setSliderPosition(scrollView: scrollView)
             }
-            setDayIndicator(value: scrollView.contentOffset.x)
+            setForecastDayIndicator(value: scrollView.contentOffset.x)
         }
     }
 
@@ -239,14 +281,12 @@ extension WelcomeViewController: UIScrollViewDelegate {
        // centerX is the middle point of collectionView
         let centerX = scrollView.contentOffset.x + scrollView.frame.size.width/2
         for cell in collectionView.visibleCells {
-
            // offsetX is the distance between cell center and the centerX(middle point)
                 var offsetX = centerX - cell.center.x
            // Make offsetX positive if negative
                 offsetX = offsetX < 0 ? (offsetX * -1) : offsetX
            // original cell
                 cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-
            // if the offset is bigger than 50, calculate a scale value and transform
             if offsetX > 50 {
                 let offsetPercentage = (offsetX - 50) / collectionView.bounds.width
