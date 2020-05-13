@@ -272,13 +272,16 @@ final class WelcomeViewController: UIViewController {
     }()
 }
 
-
-
 //MARK: - ScrollViewDelegate
 extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
             lockForUpwardsScroll(scrollView: scrollView)
+            if scrollView.contentOffset.y == 0 {
+                let attachment = NSTextAttachment()
+                attachment.image = UIImage(systemName: "arrow.down")
+                refreshControl.attributedTitle = NSAttributedString(attachment: attachment)
+            }
         } else if scrollView == collectionView {
             transformCells(scrollView: scrollView)
             if !dayForecastSlider.isHighlighted {
