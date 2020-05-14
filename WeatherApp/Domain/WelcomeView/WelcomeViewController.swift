@@ -98,9 +98,9 @@ final class WelcomeViewController: UIViewController {
     @IBAction func temperatureSelected(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            TemperatureSettingsManager.shared.setUnit(to: .celcius)
+            viewModel.settingsManager.setUnit(to: .celcius)
         case 1:
-            TemperatureSettingsManager.shared.setUnit(to: .fahrenheit)
+            viewModel.settingsManager.setUnit(to: .fahrenheit)
         default:
             return
         }
@@ -230,7 +230,7 @@ final class WelcomeViewController: UIViewController {
 
     private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
         if let text = temperatureLabel.text {
-            temperatureLabel.text = TemperatureSettingsManager.convertTemp(temp: text ,to: to)
+            temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: to)
         }
     }
 
@@ -283,7 +283,7 @@ final class WelcomeViewController: UIViewController {
         case .celcius:
             self.temperatureLabel.text = info.temperatureString
         case .fahrenheit:
-            self.temperatureLabel.text = TemperatureSettingsManager.convertTemp(temp: info.temperatureString, to: .fahrenheit)
+            self.temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: info.temperatureString, to: .fahrenheit)
         }
         
         self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)

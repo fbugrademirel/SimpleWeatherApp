@@ -8,8 +8,8 @@
 
 import UIKit
 
-protocol TemperatureSetable: class {
-    var tempUnit: TemperatureSettingsManager.TempUnit { get set }
+protocol TemperatureSettingsManagerDelegate: class {
+    func tempUnitDidSet(_ temperatureSettingsManager: TemperatureSettingsManager, unit: TemperatureSettingsManager.TempUnit)
 }
 
 final class TemperatureSettingsManager {
@@ -19,21 +19,15 @@ final class TemperatureSettingsManager {
         case celcius
     }
 
-    private var viewModels: [TemperatureSetable] = []
+    weak var delegate: TemperatureSettingsManagerDelegate?
 
     private var currentSetting: TempUnit = .celcius {
         didSet {
-            setViewModels(to: currentSetting)
+            delegate?.tempUnitDidSet(self, unit: currentSetting)
         }
     }
 
-    static let shared = TemperatureSettingsManager()
-
-    func addToModels(model: TemperatureSetable) {
-        viewModels.append(model)
-    }
-
-    static func convertTemp(temp: String, to: TempUnit) -> String {
+    func convertTemp(temp: String, to: TempUnit) -> String {
         guard let current = Double(temp) else { return "-" }
         switch to {
         case .celcius:
@@ -47,12 +41,6 @@ final class TemperatureSettingsManager {
 
     func setUnit(to: TempUnit) {
         currentSetting = to
-    }
-
-    private func setViewModels(to: TempUnit) {
-        viewModels.forEach { (viewModel) in
-            viewModel.tempUnit = to
-        }
     }
 }
 

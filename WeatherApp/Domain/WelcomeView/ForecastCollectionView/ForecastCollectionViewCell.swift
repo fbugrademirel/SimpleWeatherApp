@@ -28,9 +28,6 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         containerView.backgroundColor = AppColor.primary
-        viewModel.didReceiveActionFromView = { [weak self] action in
-            self?.handle(action: action)
-        }
     }
 
     override func prepareForReuse() {
@@ -41,14 +38,28 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
 
     func handle(action: ForecastCollectionViewCellViewModel.ActionToView) {
         switch action {
-        case .:
-            <#code#>
+        case .setTemp(let unit):
+            setTempLabel(with: unit)
+        }
+    }
+
+    func setTempLabel(with: TemperatureSettingsManager.TempUnit) {
+        if let text = temperatureLabel.text {
+            DispatchQueue.main.async {
+                self.temperatureLabel.text = self.viewModel.temperatureSettingsManager.convertTemp(temp: text ,to: with)
+            }
         }
     }
 
     func configure() {
         forecastImage.image = UIImage(systemName: viewModel.imageString)
-        temperatureLabel.text = viewModel.temperature
+        let temp = viewModel.temperature
+        switch viewModel.tempUnit {
+              case .celcius:
+                  self.temperatureLabel.text = temp
+              case .fahrenheit:
+                  self.temperatureLabel.text = viewModel.temperatureSettingsManager.convertTemp(temp: temp, to: .fahrenheit)
+              }
         let dateFormatter = DateFormatter()
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "HH:mm"
@@ -56,5 +67,8 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         windDirection.image = UIImage(systemName: viewModel.windDirectionStringForSGIcon)
         windDirection.transform = CGAffineTransform(rotationAngle: CGFloat(viewModel.windAngle))
         windSpeed.text = viewModel.windSpeed
+        viewModel.didReceiveActionForView = { [weak self] action in
+            self?.handle(action: action)
+        }
     }
 }

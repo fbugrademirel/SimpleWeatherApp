@@ -21,9 +21,14 @@ final class WelcomeViewModel: NSObject {
     var tempSetting: TemperatureSettingsManager.TempUnit = .celcius {
         didSet {
             didReceiveAction?(.setTempLabel(to: tempSetting))
+            forecastColletionViewCellModels.forEach { (model) in
+                model.tempUnit = tempSetting
+            }
         }
     }
-    let settingsManager = TemperatureSettingsManager.shared
+
+    let settingsManager = TemperatureSettingsManager()
+
     private let cityRepo = CityListRepository.shared
     private let weatherRepo = WeatherRepository.shared
     private var locationManager = CLLocationManager()
@@ -60,12 +65,8 @@ final class WelcomeViewModel: NSObject {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-        settingsManager.addToModels(model: self)
+        settingsManager.delegate = self
     }
-
-//    func settingsManagerConfigurationRequired(){
-//        didReceiveAction?(.configureSettingsManager(with: settingsManager))
-//    }
 
     func weatherInfoByLocationRequired() {
         locationManager.requestLocation()
@@ -120,8 +121,9 @@ final class WelcomeViewModel: NSObject {
                                                                 windDirectionStringForSFIcon: forecast.windDirectionStringForSFImage,
                                                                 windAngle: forecast.windDirection,
                                                                 tempUnit: self.tempSetting)
-                viewModel.didReceiveActionFromParent = { [weak self] action in
-                    self?.handle(action: action) }
+                viewModel.didReceiveActionForParent = { [weak self] action in
+                    self?.handle(action: action)
+                }
                 return viewModel
             }
             self.forecastColletionViewCellModels = forecastCellViewModels
@@ -148,16 +150,11 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
     }
 }
 
-//MARK: - TempSetable
+//MARK: - TemperatureSettingsManagerDelegate
 
-extension WelcomeViewModel: TemperatureSetable {
-    var tempUnit: TemperatureSettingsManager.TempUnit {
-        get {
-            return self.tempSetting
-        }
-        set(newValue) {
-            self.tempSetting = newValue
-        }
+extension WelcomeViewModel: TemperatureSettingsManagerDelegate {
+    func tempUnitDidSet(_ temperatureSettingsManager: TemperatureSettingsManager, unit: TemperatureSettingsManager.TempUnit) {
+        tempSetting = unit
     }
 }
 

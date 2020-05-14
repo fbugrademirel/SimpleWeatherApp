@@ -8,26 +8,31 @@
 
 import Foundation
 
-final class ForecastCollectionViewCellViewModel: TemperatureSetable {
+final class ForecastCollectionViewCellViewModel {
 
     enum ActionToParent {
         case toMain
     }
 
     enum ActionToView {
-        case setTemp
+        case setTemp(TemperatureSettingsManager.TempUnit)
     }
 
-    var tempUnit: TemperatureSettingsManager.TempUnit
+    var tempUnit: TemperatureSettingsManager.TempUnit {
+        didSet {
+            didReceiveActionForView?(.setTemp(tempUnit))
+        }
+    }
     let imageString: String
     let temperature: String
     let date: Date
     let windSpeed: String
     let windAngle: Int
     let windDirectionStringForSGIcon: String
+    let temperatureSettingsManager = TemperatureSettingsManager()
 
-    var didReceiveActionFromParent: ((ActionToParent) -> Void)?
-    var didReceiveActionFromView: ((ActionToView) -> Void)?
+    var didReceiveActionForParent: ((ActionToParent) -> Void)?
+    var didReceiveActionForView: ((ActionToView) -> Void)?
 
     init(imageString: String, temperature: String, date: Date, windSpeed: String, windDirectionStringForSFIcon: String, windAngle: Int, tempUnit: TemperatureSettingsManager.TempUnit) {
         self.imageString = imageString
@@ -38,5 +43,5 @@ final class ForecastCollectionViewCellViewModel: TemperatureSetable {
         self.windAngle = windAngle
         self.tempUnit = tempUnit
     }
-
 }
+
