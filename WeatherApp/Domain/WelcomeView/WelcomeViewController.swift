@@ -88,12 +88,14 @@ final class WelcomeViewController: UIViewController {
     }
 
     @IBAction func settingsButtonPressed(_ sender: UIButton) {
+        blockView.isUserInteractionEnabled = true
         UIView.animate(withDuration: 0.4) {
             self.blockView.alpha = 0.9
             self.segmentedUnitSelector.alpha = 1
         }
         segmentedUnitSelector.isUserInteractionEnabled = true
     }
+
     @IBAction func temperatureSelected(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -108,9 +110,10 @@ final class WelcomeViewController: UIViewController {
             self.segmentedUnitSelector.alpha = 0
         }
         segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
     }
 
-    //MARK: - objc
+    //MARK: - Objc
     @objc func slideToCell (sender: UISlider) {
         let index = (collectionView.contentSize.width - collectionView.frame.width) / 100
         let point = CGPoint(x: index * CGFloat(sender.value), y: collectionView.contentOffset.y)
@@ -143,6 +146,16 @@ final class WelcomeViewController: UIViewController {
         refreshControl.endRefreshing()
     }
 
+    @objc func blockViewTapped() {
+        UIView.animate(withDuration: 0.3) {
+            self.blockView.alpha = 0
+            self.segmentedUnitSelector.alpha = 0
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
+    }
+
+    //MARK: - Handle
     private func handle(action: WelcomeViewModel.Action) {
         switch action {
         case .updateUI(with: let model):
@@ -164,6 +177,11 @@ final class WelcomeViewController: UIViewController {
         //segmentedUnitController
         segmentedUnitSelector.alpha = 0
         segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
+        //BlokingView
+
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
+        blockView.addGestureRecognizer(tapRecognizer)
 
         // Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
