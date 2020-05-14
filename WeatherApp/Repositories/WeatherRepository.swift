@@ -21,7 +21,7 @@ final class WeatherRepository {
     static let shared = WeatherRepository()
 
     func getCurrentWeatherInfo(with locationInformation: LocationInformation, for completion: @escaping (WeatherDataAPI.CurrentWeatherData?) -> Void) {
-
+        
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 

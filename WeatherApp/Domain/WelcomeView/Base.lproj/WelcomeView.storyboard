@@ -46,10 +46,15 @@
                                                     <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
                                                         <rect key="frame" x="160.33333333333334" y="270.33333333333331" width="42.666666666666657" height="57.333333333333314"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="-" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="i4h-jA-52r">
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="-" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="i4h-jA-52r" customClass="TemperatureLabel" customModule="WeatherApp" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="21.333333333333332" height="57.333333333333336"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                                                 <nil key="highlightedColor"/>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="temperature">
+                                                                        <real key="value" value="0.0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="°" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="yKU-VP-Gdk">
                                                                 <rect key="frame" x="21.333333333333314" y="0.0" width="21.333333333333329" height="57.333333333333336"/>

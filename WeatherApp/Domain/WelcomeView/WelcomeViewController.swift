@@ -65,7 +65,7 @@ final class WelcomeViewController: UIViewController {
                 }
             }
             alertController.addAction(settingsAction)
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
 
             present(alertController, animated: true, completion: nil)
         }
@@ -87,6 +87,8 @@ final class WelcomeViewController: UIViewController {
     @IBAction func settingsButtonPressed(_ sender: UIButton) {
         
     }
+
+
 
     //MARK: - objc
     @objc func slideToCell (sender: UISlider) {
@@ -287,7 +289,7 @@ final class WelcomeViewController: UIViewController {
     private let refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         let imageAttachment = NSTextAttachment()
-        imageAttachment.image = UIImage(systemName: "arrow.down")
+        imageAttachment.image = UIImage(systemName: "arrow.down")?.withTintColor(AppColor.primary!)
         refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
         refreshControl.tintColor = .clear
         refreshControl.layer.zPosition = -1
