@@ -16,13 +16,14 @@ final class WelcomeViewModel: NSObject {
         case updateUI(with: CurrentWeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
         case setTempLabel(to: TemperatureSettingsManager.TempUnit)
+        case setUnitSegmentController(to: TemperatureSettingsManager.TempUnit)
     }
 
-    var tempSetting: TemperatureSettingsManager.TempUnit = .celcius {
+    var tempUnit: TemperatureSettingsManager.TempUnit = .celcius {
         didSet {
-            didReceiveAction?(.setTempLabel(to: tempSetting))
+            didReceiveAction?(.setTempLabel(to: tempUnit))
             forecastColletionViewCellModels.forEach { (model) in
-                model.tempUnit = tempSetting
+                model.tempUnit = tempUnit
             }
         }
     }
@@ -66,6 +67,11 @@ final class WelcomeViewModel: NSObject {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         settingsManager.delegate = self
+        let unit = TemperatureSettingsManager.TempUnit(rawValue: UserDefaults.standard.object(forKey: "Unit") as? TemperatureSettingsManager.TempUnit.RawValue ?? TemperatureSettingsManager.TempUnit.celcius.rawValue)
+        settingsManager.setUnit(to: unit)
+        if let unit = unit {
+            didReceiveAction?(.setUnitSegmentController(to: unit))
+        }
     }
 
     func weatherInfoByLocationRequired() {
@@ -120,7 +126,7 @@ final class WelcomeViewModel: NSObject {
                                                                 windSpeed: forecast.windSpeedString,
                                                                 windDirectionStringForSFIcon: forecast.windDirectionStringForSFImage,
                                                                 windAngle: forecast.windDirection,
-                                                                tempUnit: self.tempSetting)
+                                                                tempUnit: self.tempUnit)
                 viewModel.didReceiveActionForParent = { [weak self] action in
                     self?.handle(action: action)
                 }
@@ -154,7 +160,7 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
 
 extension WelcomeViewModel: TemperatureSettingsManagerDelegate {
     func tempUnitDidSet(_ temperatureSettingsManager: TemperatureSettingsManager, unit: TemperatureSettingsManager.TempUnit) {
-        tempSetting = unit
+        tempUnit = unit
     }
 }
 

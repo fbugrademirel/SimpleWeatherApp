@@ -15,6 +15,14 @@ final class FavoritesViewModel {
         case presentSearchView(with: SearchViewModel)
     }
 
+    var tempSettingsManager = TemperatureSettingsManager()
+    var tempUnit: TemperatureSettingsManager.TempUnit = .celcius {
+        didSet {
+            favoriteCityCellViewModels.forEach { (model) in
+            }
+        }
+    }
+
     private weak var cityRepo = CityListRepository.shared
     private weak var weatherRepo = WeatherRepository.shared
 

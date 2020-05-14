@@ -13,17 +13,18 @@ protocol TemperatureSettingsManagerDelegate: class {
 }
 
 final class TemperatureSettingsManager {
-
-    enum TempUnit {
-        case fahrenheit
-        case celcius
+    enum TempUnit: String {
+        case fahrenheit = "fahrenheit"
+        case celcius = "celcius"
     }
 
     weak var delegate: TemperatureSettingsManagerDelegate?
-
-    private var currentSetting: TempUnit = .celcius {
+    private var currentSetting: TempUnit? {
         didSet {
-            delegate?.tempUnitDidSet(self, unit: currentSetting)
+            UserDefaults.standard.setValue(currentSetting?.rawValue, forKey: "Unit")
+            if let setting = currentSetting {
+                delegate?.tempUnitDidSet(self, unit: setting)
+            }
         }
     }
 
@@ -39,16 +40,12 @@ final class TemperatureSettingsManager {
         }
     }
 
-    func setUnit(to: TempUnit) {
-        currentSetting = to
+    func setUnit(to: TempUnit?) {
+        if to != nil {
+            currentSetting = to
+        } else {
+            currentSetting = .celcius
+        }
     }
 }
 
-class WeakRef<T> where T: AnyObject {
-
-    private(set) weak var value: T?
-
-    init(value: T?) {
-        self.value = value
-    }
-}

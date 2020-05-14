@@ -82,7 +82,6 @@ final class WelcomeViewController: UIViewController {
     }
 
     @IBAction func favoritesButtonPressed(_ sender: UIButton) {
-        //Test
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
         let navCon = UINavigationController(rootViewController: vc)
         navigationController?.present(navCon, animated: true, completion: nil)
@@ -142,6 +141,21 @@ final class WelcomeViewController: UIViewController {
             self.refreshControl.alpha = 1
         }
         refreshControl.endRefreshing()
+    }
+
+    private func handle(action: WelcomeViewModel.Action) {
+        switch action {
+        case .updateUI(with: let model):
+            updateUIforCurrentWeatherLabels(with: model)
+        case .presentSearchView(viewModel: let viewModel):
+            presentSearchView(with: viewModel)
+        case .reloadCollectionView:
+            updateUIForForecastCells()
+        case .setTempLabel(to: let tempUnit):
+            setTempLabel(to: tempUnit)
+        case .setUnitSegmentController(to: let tempUnit):
+            setUnitSegmentController(to: tempUnit)
+        }
     }
 
     //MARK: - UI
@@ -208,6 +222,7 @@ final class WelcomeViewController: UIViewController {
         collectionView.alpha = 0
     }
 
+    //MARK: - Constraints
     private func setConstraints() {
         NSLayoutConstraint.activate([
               refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -215,19 +230,6 @@ final class WelcomeViewController: UIViewController {
     }
 
     //MARK: - Operations
-    private func handle(action: WelcomeViewModel.Action) {
-        switch action {
-        case .updateUI(with: let model):
-            updateUIforCurrentWeatherLabels(with: model)
-        case .presentSearchView(viewModel: let viewModel):
-            presentSearchView(with: viewModel)
-        case .reloadCollectionView:
-            updateUIForForecastCells()
-        case .setTempLabel(to: let tempUnit):
-            setTempLabel(to: tempUnit)
-        }
-    }
-
     private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
         if let text = temperatureLabel.text {
             temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: to)
@@ -279,7 +281,7 @@ final class WelcomeViewController: UIViewController {
         dateFormatter.dateFormat = "dd MMM HH:mm"
         self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
 
-        switch viewModel.tempSetting {
+        switch viewModel.tempUnit {
         case .celcius:
             self.temperatureLabel.text = info.temperatureString
         case .fahrenheit:
@@ -325,6 +327,16 @@ final class WelcomeViewController: UIViewController {
             return false
         }
     }
+
+    private func setUnitSegmentController(to: TemperatureSettingsManager.TempUnit) {
+        switch to {
+        case .celcius:
+            segmentedUnitSelector.selectedSegmentIndex = 0
+        case .fahrenheit:
+            segmentedUnitSelector.selectedSegmentIndex = 1
+        }
+    }
+
 
     //MARK: - Components
     private let refreshControl: UIRefreshControl = {
