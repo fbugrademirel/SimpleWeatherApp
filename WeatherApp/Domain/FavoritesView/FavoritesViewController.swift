@@ -9,6 +9,10 @@
 import UIKit
 import SwipeCellKit
 
+protocol FavoritesViewControllerDelegate: class {
+    func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int)
+}
+
 final class FavoritesViewController: UIViewController {
 
     //MARK: - IBOutlet
@@ -16,7 +20,7 @@ final class FavoritesViewController: UIViewController {
 
     //MARK: - Properties
     var viewModel: FavoritesViewModel!
-
+    weak var delegate: FavoritesViewControllerDelegate?
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -107,6 +111,12 @@ extension FavoritesViewController: UITableViewDataSource {
 
 //MARK: - TableView Delegate
 extension FavoritesViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.didSelectCity(self, cityID: viewModel.favoriteCityCellViewModels[indexPath.row].id)
+        dismiss(animated: true, completion: nil)
+    }
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }

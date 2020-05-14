@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SearchViewControllerDelegate {
+protocol SearchViewControllerDelegate: class {
     func didSelectCity(_ id: Int)
 }
 
@@ -20,7 +20,7 @@ final class SearchViewController: UIViewController {
 
     //MARK: - Properties
     var delegate: SearchViewControllerDelegate?
-    var viewModel: SearchViewModel!
+    weak var viewModel: SearchViewModel!
 
     //MARK: - Lifecycle
     override func viewDidLoad() {

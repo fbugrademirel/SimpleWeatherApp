@@ -83,6 +83,7 @@ final class WelcomeViewController: UIViewController {
 
     @IBAction func favoritesButtonPressed(_ sender: UIButton) {
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
+        vc.delegate = self
         let navCon = UINavigationController(rootViewController: vc)
         navigationController?.present(navCon, animated: true, completion: nil)
     }
@@ -456,8 +457,15 @@ extension WelcomeViewController: UICollectionViewDataSource {
     }
 }
 
-//MARK: - SearchVC Delegate
+//MARK: - FavoriteCityVC Delegate
 
+extension WelcomeViewController: FavoritesViewControllerDelegate {
+    func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int) {
+        viewModel.weatherInfoByCityIdRequired(with: cityID, isForRefresh: false)
+    }
+}
+
+//MARK: - SearchVC Delegate
 extension WelcomeViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
         viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: false)

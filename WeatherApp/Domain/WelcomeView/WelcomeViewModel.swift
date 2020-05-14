@@ -86,10 +86,6 @@ final class WelcomeViewModel: NSObject {
         }
     }
 
-    func weatherForecastByCityIdRequired(with id: Int) {
-        locationManager.requestLocation()
-    }
-
     func citySearchRequired(){
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
     }
