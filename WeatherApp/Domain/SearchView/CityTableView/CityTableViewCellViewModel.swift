@@ -12,7 +12,7 @@ final class CityTableViewCellViewModel {
 
     //TODO: - For future use
     enum Action {
-        case selectCity
+        case select
     }
 
     let city: CityListRepository.City

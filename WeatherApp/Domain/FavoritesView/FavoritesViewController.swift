@@ -9,11 +9,18 @@
 import UIKit
 import SwipeCellKit
 
+protocol FavoritesViewControllerDelegate: class {
+    func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int)
+}
+
 final class FavoritesViewController: UIViewController {
 
-    var viewModel: FavoritesViewModel!
-
+    //MARK: - IBOutlet
     @IBOutlet private var tableView: UITableView!
+
+    //MARK: - Properties
+    var viewModel: FavoritesViewModel!
+    weak var delegate: FavoritesViewControllerDelegate?
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -61,9 +68,13 @@ final class FavoritesViewController: UIViewController {
     private func setUI() {
         //Nav.Bar.
         title = "Favorites"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        rightButton.tintColor = AppColor.primary
+        navigationItem.rightBarButtonItem = rightButton
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+        let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+        leftButton.tintColor = AppColor.primary
+        navigationItem.leftBarButtonItem = leftButton
 
         //TableView
         tableView.delegate = self
@@ -72,6 +83,7 @@ final class FavoritesViewController: UIViewController {
         tableView.separatorInset = .zero
     }
 
+    //MARK: - Operations
     private func presentSearchView(with viewModel: SearchViewModel) {
         let vc = SearchViewController.instantiate(with: viewModel)
         vc.delegate = self
@@ -99,6 +111,12 @@ extension FavoritesViewController: UITableViewDataSource {
 
 //MARK: - TableView Delegate
 extension FavoritesViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.didSelectCity(self, cityID: viewModel.favoriteCityCellViewModels[indexPath.row].id)
+        dismiss(animated: true, completion: nil)
+    }
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
@@ -143,7 +161,6 @@ extension FavoritesViewController: SwipeTableViewCellDelegate {
 }
 
 //MARK: - SearchCity Delegate
-
 extension FavoritesViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
         viewModel.updateFavoriteCities(id: id, updateType: .selectAsFavorite)

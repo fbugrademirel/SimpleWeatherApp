@@ -16,18 +16,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="9kq-8K-EHf">
-                                <rect key="frame" x="6" y="6" width="402" height="762"/>
+                                <rect key="frame" x="0.0" y="6" width="414" height="762"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="centerX" secondItem="IEV-W6-h7m" secondAttribute="centerX" id="43M-NU-KhT"/>
-                            <constraint firstItem="IEV-W6-h7m" firstAttribute="trailing" secondItem="9kq-8K-EHf" secondAttribute="trailing" constant="6" id="R1E-iI-HKx"/>
+                            <constraint firstItem="IEV-W6-h7m" firstAttribute="trailing" secondItem="9kq-8K-EHf" secondAttribute="trailing" id="R1E-iI-HKx"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="top" secondItem="IEV-W6-h7m" secondAttribute="top" constant="6" id="Uej-m1-43o"/>
                             <constraint firstItem="9kq-8K-EHf" firstAttribute="centerY" secondItem="IEV-W6-h7m" secondAttribute="centerY" id="bbs-qW-TEI"/>
                             <constraint firstItem="IEV-W6-h7m" firstAttribute="bottom" secondItem="9kq-8K-EHf" secondAttribute="bottom" constant="6" id="swi-zK-kdh"/>
-                            <constraint firstItem="9kq-8K-EHf" firstAttribute="leading" secondItem="IEV-W6-h7m" secondAttribute="leading" constant="6" id="tJ8-gm-EUA"/>
+                            <constraint firstItem="9kq-8K-EHf" firstAttribute="leading" secondItem="IEV-W6-h7m" secondAttribute="leading" id="tJ8-gm-EUA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="IEV-W6-h7m"/>
                     </view>

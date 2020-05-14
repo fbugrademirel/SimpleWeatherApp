@@ -15,7 +15,20 @@ final class WelcomeViewModel: NSObject {
         case reloadCollectionView
         case updateUI(with: CurrentWeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
+        case setTempLabel(to: TemperatureSettingsManager.TempUnit)
+        case setUnitSegmentController(to: TemperatureSettingsManager.TempUnit)
     }
+
+    var tempUnit: TemperatureSettingsManager.TempUnit = .celcius {
+        didSet {
+            didReceiveAction?(.setTempLabel(to: tempUnit))
+            forecastColletionViewCellModels.forEach { (model) in
+                model.tempUnit = tempUnit
+            }
+        }
+    }
+
+    let settingsManager = TemperatureSettingsManager()
 
     private let cityRepo = CityListRepository.shared
     private let weatherRepo = WeatherRepository.shared
@@ -35,31 +48,42 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
-    var forecastColletionViewCellModels: [ForecastCollectionViewCellModel] = [] {
+    var forecastColletionViewCellModels: [ForecastCollectionViewCellViewModel] = [] {
         didSet {
             didReceiveAction?(.reloadCollectionView)
         }
     }
     var didReceiveAction: ((Action)-> Void)?
 
+    func handle(action: ForecastCollectionViewCellViewModel.ActionToParent) {
+        switch action {
+        case .toMain:
+            print()
+        }
+    }
+
     func viewDidLoad() {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+        settingsManager.delegate = self
+        let unit = TemperatureSettingsManager.TempUnit(rawValue: UserDefaults.standard.object(forKey: "Unit") as? TemperatureSettingsManager.TempUnit.RawValue ?? TemperatureSettingsManager.TempUnit.celcius.rawValue)
+        settingsManager.setUnit(to: unit)
+        if let unit = unit {
+            didReceiveAction?(.setUnitSegmentController(to: unit))
+        }
     }
 
     func weatherInfoByLocationRequired() {
         locationManager.requestLocation()
     }
 
-    func weatherInfoByCityIdRequired(with id: Int) {
+    func weatherInfoByCityIdRequired(with id: Int, isForRefresh: Bool) {
         updateCurrentWeatherInfo(with: .id(id))
         updateForecastWeatherInfo(with: .id(id))
-        cityRepo.saveAsFavoriteCity(with: id)
-    }
-
-    func weatherForecastByCityIdRequired(with id: Int) {
-        locationManager.requestLocation()
+        if !isForRefresh {
+            cityRepo.saveAsFavoriteCity(with: id)
+        }
     }
 
     func citySearchRequired(){
@@ -86,21 +110,30 @@ final class WelcomeViewModel: NSObject {
         weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
             guard let self = self, let forecastData = forecastData else { return }
 
-            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
+            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellViewModel in
                 let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
                                         temperatureDouble: forecastWeatherData.main.temp,
                                         conditionID: forecastWeatherData.weather[0].id,
                                         windSpeed: forecastWeatherData.wind.speed,
                                         windDirection: forecastWeatherData.wind.deg ?? 0)
-                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
+                let viewModel = ForecastCollectionViewCellViewModel(imageString: forecast.conditionNameForSFIcons,
                                                                 temperature: forecast.temperatureString,
                                                                 date: forecast.date,
                                                                 windSpeed: forecast.windSpeedString,
                                                                 windDirectionStringForSFIcon: forecast.windDirectionStringForSFImage,
-                                                                windAngle: forecast.windDirection)
+                                                                windAngle: forecast.windDirection,
+                                                                tempUnit: self.tempUnit)
+                viewModel.didReceiveActionForParent = { [weak self] action in
+                    self?.handle(action: action)
+                }
                 return viewModel
             }
             self.forecastColletionViewCellModels = forecastCellViewModels
+        }
+    }
+    private func setCellViewModels() {
+        forecastColletionViewCellModels.forEach { (model) in
+            
         }
     }
 }
@@ -116,6 +149,14 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
+    }
+}
+
+//MARK: - TemperatureSettingsManagerDelegate
+
+extension WelcomeViewModel: TemperatureSettingsManagerDelegate {
+    func tempUnitDidSet(_ temperatureSettingsManager: TemperatureSettingsManager, unit: TemperatureSettingsManager.TempUnit) {
+        tempUnit = unit
     }
 }
 
@@ -200,28 +241,6 @@ extension WelcomeViewModel {
                 return "cloud"
             }
         }
-//        static func getSFIconsForWindDirection(_ degree: Int) -> String {
-//            switch degree {
-//            case 23 ... 68:
-//                return "arrow.down.left"
-//            case 69 ... 112:
-//                return "arrow.left"
-//            case 113 ... 157:
-//                return "arrow.up.left"
-//            case 158 ... 202:
-//                return "arrow.up"
-//            case 203 ... 247:
-//                return "arrow.up.right"
-//            case 248 ... 293:
-//                return "arrow.right"
-//            case 294 ... 337:
-//                return "arrow.down.right"
-//            case (338 ... 359), (0 ... 23):
-//                return "arrow.down"
-//            default:
-//                return "arrow.down"
-//            }
-//        }
     }
 }
 

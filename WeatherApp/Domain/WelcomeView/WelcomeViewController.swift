@@ -13,7 +13,7 @@ import CoreLocation
 
 final class WelcomeViewController: UIViewController {
 
-    //MARK: - Properties
+    //MARK: - IBOutlet
     @IBOutlet private var containerScrollView: UIScrollView!
     @IBOutlet private var cityNameLabel: UILabel!
     @IBOutlet private var forecastTimeLabel: UILabel!
@@ -31,7 +31,10 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var buttons: [UIButton]!
     @IBOutlet private var dayForecastSlider: UISlider!
     @IBOutlet private var dayIndicator: UILabel!
+    @IBOutlet private var segmentedUnitSelector: UISegmentedControl!
+    @IBOutlet private var blockView: UIView!
 
+    //MARK: - Properties
     var viewModel: WelcomeViewModel!
 
     //MARK: - Lifecycle
@@ -41,6 +44,7 @@ final class WelcomeViewController: UIViewController {
         viewModel.didReceiveAction = { [weak self] action in
             self?.handle(action: action)
         }
+
         viewModel.viewDidLoad()
         setUI()
         setConstraints()
@@ -52,6 +56,24 @@ final class WelcomeViewController: UIViewController {
 
     //MARK: - IBAction
     @IBAction func findByLocationButtonPressed(_ sender: UIButton) {
+        if !isLocationServicesEnabled() {
+            let alertController = UIAlertController(title: "This feature requires Location Services enabled", message: "Please change your settings under:\n Settings -> Privacy -> Location Services", preferredStyle: .actionSheet)
+            let settingsAction = UIAlertAction(title: "Go to Settings", style: .default) { _ in
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                    return
+                }
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { success in
+                        print("Settings opened: \(success)") // Prints true
+                    })
+                }
+            }
+            alertController.addAction(settingsAction)
+            alertController.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
+
+            present(alertController, animated: true, completion: nil)
+        }
+
         viewModel.weatherInfoByLocationRequired()
     }
 
@@ -60,13 +82,39 @@ final class WelcomeViewController: UIViewController {
     }
 
     @IBAction func favoritesButtonPressed(_ sender: UIButton) {
-        //Test
         let vc = FavoritesViewController.instantiate(with: FavoritesViewModel())
+        vc.delegate = self
         let navCon = UINavigationController(rootViewController: vc)
         navigationController?.present(navCon, animated: true, completion: nil)
     }
 
-    //MARK: - objc
+    @IBAction func settingsButtonPressed(_ sender: UIButton) {
+        blockView.isUserInteractionEnabled = true
+        UIView.animate(withDuration: 0.4) {
+            self.blockView.alpha = 0.9
+            self.segmentedUnitSelector.alpha = 1
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = true
+    }
+
+    @IBAction func temperatureSelected(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            viewModel.settingsManager.setUnit(to: .celcius)
+        case 1:
+            viewModel.settingsManager.setUnit(to: .fahrenheit)
+        default:
+            return
+        }
+        UIView.animate(withDuration: 0.3) {
+            self.blockView.alpha = 0
+            self.segmentedUnitSelector.alpha = 0
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
+    }
+
+    //MARK: - Objc
     @objc func slideToCell (sender: UISlider) {
         let index = (collectionView.contentSize.width - collectionView.frame.width) / 100
         let point = CGPoint(x: index * CGFloat(sender.value), y: collectionView.contentOffset.y)
@@ -85,8 +133,10 @@ final class WelcomeViewController: UIViewController {
     }
 
     @objc func refresh(_ sender: AnyObject) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
         guard let id = viewModel.currentWeatherInfo?.id else { return }
-        viewModel.weatherInfoByCityIdRequired(with: id)
+        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: true)
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
@@ -97,8 +147,43 @@ final class WelcomeViewController: UIViewController {
         refreshControl.endRefreshing()
     }
 
+    @objc func blockViewTapped() {
+        UIView.animate(withDuration: 0.3) {
+            self.blockView.alpha = 0
+            self.segmentedUnitSelector.alpha = 0
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
+    }
+
+    //MARK: - Handle
+    private func handle(action: WelcomeViewModel.Action) {
+        switch action {
+        case .updateUI(with: let model):
+            updateUIforCurrentWeatherLabels(with: model)
+        case .presentSearchView(viewModel: let viewModel):
+            presentSearchView(with: viewModel)
+        case .reloadCollectionView:
+            updateUIForForecastCells()
+        case .setTempLabel(to: let tempUnit):
+            setTempLabel(to: tempUnit)
+        case .setUnitSegmentController(to: let tempUnit):
+            setUnitSegmentController(to: tempUnit)
+        }
+    }
+
     //MARK: - UI
     private func setUI() {
+
+        //segmentedUnitController
+        segmentedUnitSelector.alpha = 0
+        segmentedUnitSelector.isUserInteractionEnabled = false
+        blockView.isUserInteractionEnabled = false
+        //BlokingView
+
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
+        blockView.addGestureRecognizer(tapRecognizer)
+
         // Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
@@ -156,6 +241,7 @@ final class WelcomeViewController: UIViewController {
         collectionView.alpha = 0
     }
 
+    //MARK: - Constraints
     private func setConstraints() {
         NSLayoutConstraint.activate([
               refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -163,14 +249,9 @@ final class WelcomeViewController: UIViewController {
     }
 
     //MARK: - Operations
-    private func handle(action: WelcomeViewModel.Action) {
-        switch action {
-        case .updateUI(with: let model):
-            updateUIforCurrentWeatherLabels(with: model)
-        case .presentSearchView(viewModel: let viewModel):
-            presentSearchView(with: viewModel)
-        case .reloadCollectionView:
-            updateUIForForecastCells()
+    private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
+        if let text = temperatureLabel.text {
+            temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: to)
         }
     }
 
@@ -218,7 +299,14 @@ final class WelcomeViewController: UIViewController {
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "dd MMM HH:mm"
         self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-        self.temperatureLabel.text = info.temperatureString
+
+        switch viewModel.tempUnit {
+        case .celcius:
+            self.temperatureLabel.text = info.temperatureString
+        case .fahrenheit:
+            self.temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: info.temperatureString, to: .fahrenheit)
+        }
+        
         self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
         self.weatherDescriptionLabel.text = info.conditionDescription
         self.windSpeed.text = info.windSpeedString
@@ -259,11 +347,21 @@ final class WelcomeViewController: UIViewController {
         }
     }
 
+    private func setUnitSegmentController(to: TemperatureSettingsManager.TempUnit) {
+        switch to {
+        case .celcius:
+            segmentedUnitSelector.selectedSegmentIndex = 0
+        case .fahrenheit:
+            segmentedUnitSelector.selectedSegmentIndex = 1
+        }
+    }
+
+
     //MARK: - Components
     private let refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         let imageAttachment = NSTextAttachment()
-        imageAttachment.image = UIImage(systemName: "arrow.down")
+        imageAttachment.image = UIImage(systemName: "arrow.down")?.withTintColor(AppColor.primary!)
         refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
         refreshControl.tintColor = .clear
         refreshControl.layer.zPosition = -1
@@ -272,13 +370,16 @@ final class WelcomeViewController: UIViewController {
     }()
 }
 
-
-
 //MARK: - ScrollViewDelegate
 extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
             lockForUpwardsScroll(scrollView: scrollView)
+            if scrollView.contentOffset.y == 0 {
+                let attachment = NSTextAttachment()
+                attachment.image = UIImage(systemName: "arrow.down")
+                refreshControl.attributedTitle = NSAttributedString(attachment: attachment)
+            }
         } else if scrollView == collectionView {
             transformCells(scrollView: scrollView)
             if !dayForecastSlider.isHighlighted {
@@ -356,11 +457,18 @@ extension WelcomeViewController: UICollectionViewDataSource {
     }
 }
 
-//MARK: - SearchVC Delegate
+//MARK: - FavoriteCityVC Delegate
 
+extension WelcomeViewController: FavoritesViewControllerDelegate {
+    func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int) {
+        viewModel.weatherInfoByCityIdRequired(with: cityID, isForRefresh: false)
+    }
+}
+
+//MARK: - SearchVC Delegate
 extension WelcomeViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: id)
+        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: false)
     }
 }
 

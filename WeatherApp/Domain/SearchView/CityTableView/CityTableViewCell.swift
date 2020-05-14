@@ -18,19 +18,12 @@ final class CityTableViewCell: UITableViewCell {
         }
     }
 
-    @IBOutlet weak var cityName: UILabel!
-    @IBOutlet weak var country: UILabel!
+    @IBOutlet private var cityName: UILabel!
+    @IBOutlet private var country: UILabel!
 
     override func prepareForReuse() {
         cityName.attributedText = nil
         country.text = nil
-    }
-
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
     private func configure() {
