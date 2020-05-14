@@ -14,11 +14,13 @@ protocol SearchViewControllerDelegate {
 
 final class SearchViewController: UIViewController {
 
-    var delegate: SearchViewControllerDelegate?
-    var viewModel: SearchViewModel!
-
+    //MARK: - IBOutlet
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var searchBar: UISearchBar!
+
+    //MARK: - Properties
+    var delegate: SearchViewControllerDelegate?
+    var viewModel: SearchViewModel!
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -46,6 +48,9 @@ final class SearchViewController: UIViewController {
 
     //MARK: - UI
     private func setUI() {
+
+        searchBar.tintColor = AppColor.primary
+
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self

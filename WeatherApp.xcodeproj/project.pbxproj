@@ -17,9 +17,8 @@
 		135C452824621B2700C727ED /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135C452724621B2700C727ED /* AppColor.swift */; };
 		135C452D2463564100C727ED /* ForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135C452B2463564100C727ED /* ForecastCollectionViewCell.swift */; };
 		135C452E2463564100C727ED /* ForecastCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 135C452C2463564100C727ED /* ForecastCollectionViewCell.xib */; };
-		135C45302463565800C727ED /* ForecastCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135C452F2463565800C727ED /* ForecastCollectionViewCellModel.swift */; };
-		136708E6246C900300DA1746 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136708E5246C900300DA1746 /* SettingsManager.swift */; };
-		136708E8246C988900DA1746 /* TemperatureLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136708E7246C988900DA1746 /* TemperatureLabel.swift */; };
+		135C45302463565800C727ED /* ForecastCollectionViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135C452F2463565800C727ED /* ForecastCollectionViewCellViewModel.swift */; };
+		136708E6246C900300DA1746 /* TemperatureSettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136708E5246C900300DA1746 /* TemperatureSettingsManager.swift */; };
 		139DF0802469ACDF00624470 /* FavoriteCityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139DF07E2469ACDF00624470 /* FavoriteCityTableViewCell.swift */; };
 		139DF0812469ACDF00624470 /* FavoriteCityCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 139DF07F2469ACDF00624470 /* FavoriteCityCellTableViewCell.xib */; };
 		139DF0832469ADBF00624470 /* FavoriteCityTableViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139DF0822469ADBF00624470 /* FavoriteCityTableViewCellViewModel.swift */; };
@@ -56,9 +55,8 @@
 		135C452724621B2700C727ED /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		135C452B2463564100C727ED /* ForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		135C452C2463564100C727ED /* ForecastCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ForecastCollectionViewCell.xib; sourceTree = "<group>"; };
-		135C452F2463565800C727ED /* ForecastCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCollectionViewCellModel.swift; sourceTree = "<group>"; };
-		136708E5246C900300DA1746 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
-		136708E7246C988900DA1746 /* TemperatureLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureLabel.swift; sourceTree = "<group>"; };
+		135C452F2463565800C727ED /* ForecastCollectionViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCollectionViewCellViewModel.swift; sourceTree = "<group>"; };
+		136708E5246C900300DA1746 /* TemperatureSettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureSettingsManager.swift; sourceTree = "<group>"; };
 		139DF07E2469ACDF00624470 /* FavoriteCityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCityTableViewCell.swift; sourceTree = "<group>"; };
 		139DF07F2469ACDF00624470 /* FavoriteCityCellTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavoriteCityCellTableViewCell.xib; sourceTree = "<group>"; };
 		139DF0822469ADBF00624470 /* FavoriteCityTableViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCityTableViewCellViewModel.swift; sourceTree = "<group>"; };
@@ -123,7 +121,6 @@
 			isa = PBXGroup;
 			children = (
 				135C452724621B2700C727ED /* AppColor.swift */,
-				136708E7246C988900DA1746 /* TemperatureLabel.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -132,7 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				135C452B2463564100C727ED /* ForecastCollectionViewCell.swift */,
-				135C452F2463565800C727ED /* ForecastCollectionViewCellModel.swift */,
+				135C452F2463565800C727ED /* ForecastCollectionViewCellViewModel.swift */,
 				135C452C2463564100C727ED /* ForecastCollectionViewCell.xib */,
 			);
 			path = ForecastCollectionView;
@@ -141,7 +138,7 @@
 		136708E4246C899700DA1746 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				136708E5246C900300DA1746 /* SettingsManager.swift */,
+				136708E5246C900300DA1746 /* TemperatureSettingsManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -418,8 +415,7 @@
 			files = (
 				13BD7F822447322500762BDD /* NetworkingService.swift in Sources */,
 				130131D42460C97F00CBEDDC /* StackViewExtension.swift in Sources */,
-				136708E8246C988900DA1746 /* TemperatureLabel.swift in Sources */,
-				135C45302463565800C727ED /* ForecastCollectionViewCellModel.swift in Sources */,
+				135C45302463565800C727ED /* ForecastCollectionViewCellViewModel.swift in Sources */,
 				13BD7F942448A85500762BDD /* WelcomeViewModel.swift in Sources */,
 				13BD7F74244730EC00762BDD /* WeatherApp.xcdatamodeld in Sources */,
 				13BD7F6E244730EC00762BDD /* WelcomeViewController.swift in Sources */,
@@ -437,7 +433,7 @@
 				13BD7F6A244730EC00762BDD /* AppDelegate.swift in Sources */,
 				13D05E1E24696D3700C75716 /* FavoritesViewController.swift in Sources */,
 				135C452D2463564100C727ED /* ForecastCollectionViewCell.swift in Sources */,
-				136708E6246C900300DA1746 /* SettingsManager.swift in Sources */,
+				136708E6246C900300DA1746 /* TemperatureSettingsManager.swift in Sources */,
 				130131D2245E290000CBEDDC /* CityTableViewCellViewModel.swift in Sources */,
 				13BD7F982448F39D00762BDD /* WeatherRepository.swift in Sources */,
 				13BD7F6C244730EC00762BDD /* SceneDelegate.swift in Sources */,

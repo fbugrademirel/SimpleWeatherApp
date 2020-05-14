@@ -13,7 +13,7 @@ import CoreLocation
 
 final class WelcomeViewController: UIViewController {
 
-    //MARK: - Properties
+    //MARK: - IBOutlet
     @IBOutlet private var containerScrollView: UIScrollView!
     @IBOutlet private var cityNameLabel: UILabel!
     @IBOutlet private var forecastTimeLabel: UILabel!
@@ -31,7 +31,10 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var buttons: [UIButton]!
     @IBOutlet private var dayForecastSlider: UISlider!
     @IBOutlet private var dayIndicator: UILabel!
+    @IBOutlet private var segmentedUnitSelector: UISegmentedControl!
+    @IBOutlet private var blockView: UIView!
 
+    //MARK: - Properties
     var viewModel: WelcomeViewModel!
 
     //MARK: - Lifecycle
@@ -41,6 +44,7 @@ final class WelcomeViewController: UIViewController {
         viewModel.didReceiveAction = { [weak self] action in
             self?.handle(action: action)
         }
+
         viewModel.viewDidLoad()
         setUI()
         setConstraints()
@@ -85,10 +89,27 @@ final class WelcomeViewController: UIViewController {
     }
 
     @IBAction func settingsButtonPressed(_ sender: UIButton) {
-        
+        UIView.animate(withDuration: 0.4) {
+            self.blockView.alpha = 0.9
+            self.segmentedUnitSelector.alpha = 1
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = true
     }
-
-
+    @IBAction func temperatureSelected(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            TemperatureSettingsManager.shared.setUnit(to: .celcius)
+        case 1:
+            TemperatureSettingsManager.shared.setUnit(to: .fahrenheit)
+        default:
+            return
+        }
+        UIView.animate(withDuration: 0.3) {
+            self.blockView.alpha = 0
+            self.segmentedUnitSelector.alpha = 0
+        }
+        segmentedUnitSelector.isUserInteractionEnabled = false
+    }
 
     //MARK: - objc
     @objc func slideToCell (sender: UISlider) {
@@ -125,6 +146,11 @@ final class WelcomeViewController: UIViewController {
 
     //MARK: - UI
     private func setUI() {
+
+        //segmentedUnitController
+        segmentedUnitSelector.alpha = 0
+        segmentedUnitSelector.isUserInteractionEnabled = false
+
         // Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
@@ -197,6 +223,14 @@ final class WelcomeViewController: UIViewController {
             presentSearchView(with: viewModel)
         case .reloadCollectionView:
             updateUIForForecastCells()
+        case .setTempLabel(to: let tempUnit):
+            setTempLabel(to: tempUnit)
+        }
+    }
+
+    private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
+        if let text = temperatureLabel.text {
+            temperatureLabel.text = TemperatureSettingsManager.convertTemp(temp: text ,to: to)
         }
     }
 
@@ -244,7 +278,14 @@ final class WelcomeViewController: UIViewController {
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "dd MMM HH:mm"
         self.forecastTimeLabel.text = dateFormatter.string(from: info.date)
-        self.temperatureLabel.text = info.temperatureString
+
+        switch viewModel.tempSetting {
+        case .celcius:
+            self.temperatureLabel.text = info.temperatureString
+        case .fahrenheit:
+            self.temperatureLabel.text = TemperatureSettingsManager.convertTemp(temp: info.temperatureString, to: .fahrenheit)
+        }
+        
         self.weatherImage.image = UIImage(systemName: info.conditionNameForSFIcons)
         self.weatherDescriptionLabel.text = info.conditionDescription
         self.windSpeed.text = info.windSpeedString

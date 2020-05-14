@@ -43,21 +43,22 @@
                                                             <constraint firstAttribute="width" secondItem="SFx-ea-aeg" secondAttribute="height" multiplier="1:1" id="tCn-6l-UXv"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
-                                                        <rect key="frame" x="160.33333333333334" y="270.33333333333331" width="42.666666666666657" height="57.333333333333314"/>
+                                                    <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
+                                                        <rect key="frame" x="106.66666666666669" y="270.33333333333331" width="150" height="57.333333333333314"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="-" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="i4h-jA-52r" customClass="TemperatureLabel" customModule="WeatherApp" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="21.333333333333332" height="57.333333333333336"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhl-at-7z0">
+                                                                <rect key="frame" x="0.0" y="0.0" width="50" height="57.333333333333336"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="-" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="i4h-jA-52r">
+                                                                <rect key="frame" x="49.999999999999986" y="0.0" width="50" height="57.333333333333336"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                                                 <nil key="highlightedColor"/>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="number" keyPath="temperature">
-                                                                        <real key="value" value="0.0"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" text="°" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="yKU-VP-Gdk">
-                                                                <rect key="frame" x="21.333333333333314" y="0.0" width="21.333333333333329" height="57.333333333333336"/>
+                                                                <rect key="frame" x="99.999999999999986" y="0.0" width="50.000000000000014" height="57.333333333333336"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
@@ -245,17 +246,37 @@
                                 <color key="textColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nss-8M-MMg" userLabel="BlockView">
+                                <rect key="frame" x="0.0" y="44" width="375" height="768"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="BGS-bX-SAl">
+                                <rect key="frame" x="250" y="652" width="119" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="XZe-6Z-jl2"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="°C"/>
+                                    <segment title="°F"/>
+                                </segments>
+                                <connections>
+                                    <action selector="temperatureSelected:" destination="BYZ-38-t0r" eventType="valueChanged" id="aal-Je-Dmp"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="j63-K8-ANS" firstAttribute="trailing" secondItem="PXa-xk-1Ri" secondAttribute="trailing" constant="6" id="1hM-G4-Nbk"/>
                             <constraint firstItem="TMf-qH-nax" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.6" id="2sj-CH-1cA"/>
+                            <constraint firstItem="BGS-bX-SAl" firstAttribute="leading" secondItem="j63-K8-ANS" secondAttribute="leading" constant="250" id="3BD-Ez-B5d"/>
+                            <constraint firstItem="nss-8M-MMg" firstAttribute="top" secondItem="j63-K8-ANS" secondAttribute="top" id="665-1x-7I9"/>
                             <constraint firstItem="iXZ-fn-jGI" firstAttribute="leading" secondItem="j63-K8-ANS" secondAttribute="leading" constant="12" id="C06-cE-xzT"/>
                             <constraint firstItem="uWx-rm-Mdg" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.37" id="KQj-2L-i9a"/>
                             <constraint firstAttribute="trailing" secondItem="uWx-rm-Mdg" secondAttribute="trailing" constant="-1" id="NPr-7t-hYL"/>
                             <constraint firstItem="azp-yG-u7X" firstAttribute="bottom" secondItem="Fvx-2c-R4g" secondAttribute="top" constant="-6" id="ONx-rM-nXf"/>
                             <constraint firstItem="azp-yG-u7X" firstAttribute="centerX" secondItem="j63-K8-ANS" secondAttribute="centerX" id="TQ7-kR-u5X"/>
                             <constraint firstItem="PXa-xk-1Ri" firstAttribute="leading" secondItem="j63-K8-ANS" secondAttribute="leading" constant="6" id="UW5-k1-3Ag"/>
+                            <constraint firstItem="nss-8M-MMg" firstAttribute="leading" secondItem="j63-K8-ANS" secondAttribute="leading" id="Vrb-ix-U6k"/>
                             <constraint firstItem="Fvx-2c-R4g" firstAttribute="leading" secondItem="j63-K8-ANS" secondAttribute="leading" constant="6" id="YnW-7b-JlE"/>
                             <constraint firstItem="PXa-xk-1Ri" firstAttribute="top" secondItem="Fvx-2c-R4g" secondAttribute="bottom" id="Ywv-Mj-UnX"/>
                             <constraint firstAttribute="trailing" secondItem="TMf-qH-nax" secondAttribute="trailing" id="aO8-yh-ilU"/>
@@ -263,10 +284,15 @@
                             <constraint firstItem="j63-K8-ANS" firstAttribute="trailing" secondItem="Fvx-2c-R4g" secondAttribute="trailing" constant="6" id="che-PU-2iT"/>
                             <constraint firstItem="TMf-qH-nax" firstAttribute="top" secondItem="j63-K8-ANS" secondAttribute="top" id="dSf-CK-KY3"/>
                             <constraint firstAttribute="bottom" secondItem="uWx-rm-Mdg" secondAttribute="bottom" id="egK-0p-n0g"/>
+                            <constraint firstItem="iXZ-fn-jGI" firstAttribute="top" secondItem="BGS-bX-SAl" secondAttribute="bottom" id="gLt-hs-i7d"/>
                             <constraint firstItem="uWx-rm-Mdg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="-1" id="gR3-8o-RFD"/>
                             <constraint firstItem="iXZ-fn-jGI" firstAttribute="top" secondItem="PXa-xk-1Ri" secondAttribute="bottom" constant="6" id="heH-nY-e21"/>
+                            <constraint firstItem="nss-8M-MMg" firstAttribute="centerX" secondItem="j63-K8-ANS" secondAttribute="centerX" id="map-jm-dxB"/>
+                            <constraint firstAttribute="bottom" secondItem="nss-8M-MMg" secondAttribute="bottom" id="qD8-Yy-N0l"/>
+                            <constraint firstItem="BGS-bX-SAl" firstAttribute="trailing" secondItem="PXa-xk-1Ri" secondAttribute="trailing" id="qsm-Fi-kec"/>
                             <constraint firstItem="TMf-qH-nax" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="sNg-hH-Ck6"/>
                             <constraint firstItem="j63-K8-ANS" firstAttribute="trailing" secondItem="iXZ-fn-jGI" secondAttribute="trailing" constant="12" id="u1a-UM-dpM"/>
+                            <constraint firstItem="j63-K8-ANS" firstAttribute="trailing" secondItem="nss-8M-MMg" secondAttribute="trailing" id="vKJ-B4-LRl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="j63-K8-ANS"/>
                     </view>
@@ -284,6 +310,7 @@
                     </navigationItem>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="blockView" destination="nss-8M-MMg" id="h9u-LD-Uze"/>
                         <outlet property="bottomButtonsStackView" destination="iXZ-fn-jGI" id="sgg-3x-6pB"/>
                         <outlet property="cityNameLabel" destination="Ghk-2s-ytK" id="awv-a0-Nsu"/>
                         <outlet property="collectionView" destination="uWx-rm-Mdg" id="em6-xm-qHf"/>
@@ -292,6 +319,7 @@
                         <outlet property="dayIndicator" destination="azp-yG-u7X" id="A6f-hM-MSd"/>
                         <outlet property="forecastTimeLabel" destination="xjg-w0-Ie8" id="Xni-dq-x9P"/>
                         <outlet property="infoStackView" destination="Oey-b3-glE" id="mq7-ea-aD8"/>
+                        <outlet property="segmentedUnitSelector" destination="BGS-bX-SAl" id="Ne5-pA-1bt"/>
                         <outlet property="temperatureLabel" destination="i4h-jA-52r" id="vHS-I7-C0E"/>
                         <outlet property="temperatureUnitIndicator" destination="yKU-VP-Gdk" id="cFt-MO-UlD"/>
                         <outlet property="weatherDescriptionLabel" destination="Cbv-Fm-LbL" id="lMW-qM-lLI"/>

@@ -19,7 +19,7 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
     @IBOutlet private var windDirection: UIImageView!
     @IBOutlet private var windSpeed: UILabel!
 
-    var viewModel: ForecastCollectionViewCellModel! {
+    var viewModel: ForecastCollectionViewCellViewModel! {
         didSet {
             configure()
         }
@@ -28,12 +28,22 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         containerView.backgroundColor = AppColor.primary
+        viewModel.didReceiveActionFromView = { [weak self] action in
+            self?.handle(action: action)
+        }
     }
 
     override func prepareForReuse() {
         temperatureLabel.text = nil
         forecastImage.image = nil
         timeLabel.text = nil
+    }
+
+    func handle(action: ForecastCollectionViewCellViewModel.ActionToView) {
+        switch action {
+        case .:
+            <#code#>
+        }
     }
 
     func configure() {

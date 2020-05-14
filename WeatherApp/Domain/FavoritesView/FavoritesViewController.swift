@@ -11,9 +11,12 @@ import SwipeCellKit
 
 final class FavoritesViewController: UIViewController {
 
+    //MARK: - IBOutlet
+    @IBOutlet private var tableView: UITableView!
+
+    //MARK: - Properties
     var viewModel: FavoritesViewModel!
 
-    @IBOutlet private var tableView: UITableView!
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -61,9 +64,13 @@ final class FavoritesViewController: UIViewController {
     private func setUI() {
         //Nav.Bar.
         title = "Favorites"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        rightButton.tintColor = AppColor.primary
+        navigationItem.rightBarButtonItem = rightButton
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+        let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+        leftButton.tintColor = AppColor.primary
+        navigationItem.leftBarButtonItem = leftButton
 
         //TableView
         tableView.delegate = self
@@ -72,6 +79,7 @@ final class FavoritesViewController: UIViewController {
         tableView.separatorInset = .zero
     }
 
+    //MARK: - Operations
     private func presentSearchView(with viewModel: SearchViewModel) {
         let vc = SearchViewController.instantiate(with: viewModel)
         vc.delegate = self
@@ -143,7 +151,6 @@ extension FavoritesViewController: SwipeTableViewCellDelegate {
 }
 
 //MARK: - SearchCity Delegate
-
 extension FavoritesViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
         viewModel.updateFavoriteCities(id: id, updateType: .selectAsFavorite)

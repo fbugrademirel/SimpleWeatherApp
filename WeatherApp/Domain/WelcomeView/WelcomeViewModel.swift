@@ -15,8 +15,15 @@ final class WelcomeViewModel: NSObject {
         case reloadCollectionView
         case updateUI(with: CurrentWeatherModel)
         case presentSearchView(viewModel: SearchViewModel)
+        case setTempLabel(to: TemperatureSettingsManager.TempUnit)
     }
 
+    var tempSetting: TemperatureSettingsManager.TempUnit = .celcius {
+        didSet {
+            didReceiveAction?(.setTempLabel(to: tempSetting))
+        }
+    }
+    let settingsManager = TemperatureSettingsManager.shared
     private let cityRepo = CityListRepository.shared
     private let weatherRepo = WeatherRepository.shared
     private var locationManager = CLLocationManager()
@@ -35,18 +42,30 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
-    var forecastColletionViewCellModels: [ForecastCollectionViewCellModel] = [] {
+    var forecastColletionViewCellModels: [ForecastCollectionViewCellViewModel] = [] {
         didSet {
             didReceiveAction?(.reloadCollectionView)
         }
     }
     var didReceiveAction: ((Action)-> Void)?
 
+    func handle(action: ForecastCollectionViewCellViewModel.ActionToParent) {
+        switch action {
+        case .toMain:
+            print()
+        }
+    }
+
     func viewDidLoad() {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+        settingsManager.addToModels(model: self)
     }
+
+//    func settingsManagerConfigurationRequired(){
+//        didReceiveAction?(.configureSettingsManager(with: settingsManager))
+//    }
 
     func weatherInfoByLocationRequired() {
         locationManager.requestLocation()
@@ -88,21 +107,29 @@ final class WelcomeViewModel: NSObject {
         weatherRepo.getForecastWeatherInfo(with: requestInfo) { [weak self] forecastData in
             guard let self = self, let forecastData = forecastData else { return }
 
-            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellModel in
+            let forecastCellViewModels = forecastData.list.map { forecastWeatherData -> ForecastCollectionViewCellViewModel in
                 let forecast = Forecast(date: Date(timeIntervalSince1970: forecastWeatherData.dt),
                                         temperatureDouble: forecastWeatherData.main.temp,
                                         conditionID: forecastWeatherData.weather[0].id,
                                         windSpeed: forecastWeatherData.wind.speed,
                                         windDirection: forecastWeatherData.wind.deg ?? 0)
-                let viewModel = ForecastCollectionViewCellModel(imageString: forecast.conditionNameForSFIcons,
+                let viewModel = ForecastCollectionViewCellViewModel(imageString: forecast.conditionNameForSFIcons,
                                                                 temperature: forecast.temperatureString,
                                                                 date: forecast.date,
                                                                 windSpeed: forecast.windSpeedString,
                                                                 windDirectionStringForSFIcon: forecast.windDirectionStringForSFImage,
-                                                                windAngle: forecast.windDirection)
+                                                                windAngle: forecast.windDirection,
+                                                                tempUnit: self.tempSetting)
+                viewModel.didReceiveActionFromParent = { [weak self] action in
+                    self?.handle(action: action) }
                 return viewModel
             }
             self.forecastColletionViewCellModels = forecastCellViewModels
+        }
+    }
+    private func setCellViewModels() {
+        forecastColletionViewCellModels.forEach { (model) in
+            
         }
     }
 }
@@ -118,6 +145,19 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
+    }
+}
+
+//MARK: - TempSetable
+
+extension WelcomeViewModel: TemperatureSetable {
+    var tempUnit: TemperatureSettingsManager.TempUnit {
+        get {
+            return self.tempSetting
+        }
+        set(newValue) {
+            self.tempSetting = newValue
+        }
     }
 }
 
