@@ -16,12 +16,7 @@ final class FavoritesViewModel {
     }
 
     var tempSettingsManager = TemperatureSettingsManager()
-    var tempUnit: TemperatureSettingsManager.TempUnit = .celcius {
-        didSet {
-            favoriteCityCellViewModels.forEach { (model) in
-            }
-        }
-    }
+    var tempUnit: TemperatureSettingsManager.TempUnit?
 
     private weak var cityRepo = CityListRepository.shared
     private weak var weatherRepo = WeatherRepository.shared
@@ -36,6 +31,8 @@ final class FavoritesViewModel {
 
     func fetchFavoriteCityWeathers() {
 
+       tempUnit = TemperatureSettingsManager.TempUnit(rawValue: UserDefaults.standard.object(forKey: "Unit") as? TemperatureSettingsManager.TempUnit.RawValue ?? TemperatureSettingsManager.TempUnit.celcius.rawValue)
+
         let favoriteCities = CityListRepository.shared.fetchFavoriteCities().map { cityListItem -> FavoriteCityModel in
             let model = FavoriteCityModel(id: Int(cityListItem.id))
             return model
@@ -45,7 +42,11 @@ final class FavoritesViewModel {
             guard let weatherRepo = weatherRepo else { return }
             weatherRepo.getCurrentWeatherInfo(with: .id(eachCity.id )) { [weak self] (data) in
             guard let data = data else { return }
-                let viewModel = FavoriteCityTableViewCellViewModel(id: data.id, cityName: data.name, temperature: data.main.temp, conditionID: data.weather[0].id)
+                let viewModel = FavoriteCityTableViewCellViewModel(id: data.id,
+                                                                   cityName: data.name,
+                                                                   temperature: data.main.temp,
+                                                                   conditionID: data.weather[0].id,
+                                                                   tempUnit: self?.tempUnit)
                 self?.favoriteCityCellViewModels.append(viewModel)
             }
         }

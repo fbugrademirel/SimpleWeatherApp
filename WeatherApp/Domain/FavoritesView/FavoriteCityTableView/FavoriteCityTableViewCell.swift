@@ -35,7 +35,15 @@ final class FavoriteCityTableViewCell: SwipeTableViewCell {
 
     private func configure() {
         cityName.text = viewModel.cityName
-        temperature.text = viewModel.temperatureString
+        let temp = viewModel.temperatureString
+        switch viewModel.tempUnit {
+        case .celcius:
+            self.temperature.text = temp
+        case .fahrenheit:
+            self.temperature.text = viewModel.temperatureSettingsManager.convertTemp(temp: temp, to: .fahrenheit)
+        case .none:
+            self.temperature.text = temp
+        }
         conditionView.image = UIImage(systemName: viewModel.conditionNameForSFIcons)
     }
 }

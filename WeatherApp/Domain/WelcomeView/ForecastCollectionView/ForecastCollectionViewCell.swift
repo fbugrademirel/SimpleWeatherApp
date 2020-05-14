@@ -55,11 +55,11 @@ final class ForecastCollectionViewCell: UICollectionViewCell {
         forecastImage.image = UIImage(systemName: viewModel.imageString)
         let temp = viewModel.temperature
         switch viewModel.tempUnit {
-              case .celcius:
-                  self.temperatureLabel.text = temp
-              case .fahrenheit:
-                  self.temperatureLabel.text = viewModel.temperatureSettingsManager.convertTemp(temp: temp, to: .fahrenheit)
-              }
+        case .celcius:
+            self.temperatureLabel.text = temp
+        case .fahrenheit:
+            self.temperatureLabel.text = viewModel.temperatureSettingsManager.convertTemp(temp: temp, to: .fahrenheit)
+        }
         let dateFormatter = DateFormatter()
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "HH:mm"
