@@ -134,11 +134,11 @@ final class WelcomeViewController: UIViewController {
         transformCells(scrollView: collectionView)
     }
 
-    @objc func refresh(_ sender: AnyObject) {
+    @objc func pulledToRefresh(_ sender: AnyObject) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         guard let id = viewModel.currentWeatherInfo?.id else { return }
-        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: true)
+        viewModel.weatherInfoByCityIdRequired(with: id, saveAsFavorite: false)
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
@@ -214,7 +214,7 @@ final class WelcomeViewController: UIViewController {
 
         //scroll view
         containerScrollView.delegate = self
-        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(pulledToRefresh(_:)), for: .valueChanged)
         containerScrollView.addSubview(refreshControl)
 
         // Images
@@ -258,6 +258,7 @@ final class WelcomeViewController: UIViewController {
     }
 
     private func updateUIforCurrentWeatherLabels(with model: WelcomeViewModel.CurrentWeatherModel) {
+        viewModel.saveAsLastCityOnWelcomeScreen(id: model.id)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                 self.infoStackView.alpha = 0
@@ -463,14 +464,14 @@ extension WelcomeViewController: UICollectionViewDataSource {
 
 extension WelcomeViewController: FavoritesViewControllerDelegate {
     func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: cityID, isForRefresh: false)
+        viewModel.weatherInfoByCityIdRequired(with: cityID)
     }
 }
 
 //MARK: - SearchVC Delegate
 extension WelcomeViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: false)
+        viewModel.weatherInfoByCityIdRequired(with: id)
     }
 }
 
