@@ -19,8 +19,8 @@ final class SearchViewController: UIViewController {
     @IBOutlet private var searchBar: UISearchBar!
 
     //MARK: - Properties
-    var delegate: SearchViewControllerDelegate?
-    weak var viewModel: SearchViewModel!
+    weak var delegate: SearchViewControllerDelegate?
+    var viewModel: SearchViewModel!
 
     //MARK: - Lifecycle
     override func viewDidLoad() {

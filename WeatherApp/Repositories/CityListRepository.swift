@@ -16,9 +16,8 @@ final class CityListRepository {
     private(set) var favoriteCities: [CityListItem] = []
 
     static let shared = CityListRepository()
-    /// Initializer reads and saves the json file to coredata if the core data is empty.
-    init() {
 
+    init() {
         favoriteCities = fetchFavoriteCities()
         var isEmpty: Bool {
             do {
@@ -30,13 +29,13 @@ final class CityListRepository {
             }
         }
         if isEmpty {
-            print("initializing city repo")
+            print("Initializing city repository")
             if let path = Bundle.main.path(forResource: "citylist", ofType: "json") {
                 do {
                     let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-                    print("Starting to read json")
+                    print("Starting to read json of city names")
                     let decodedData = try JSONDecoder().decode([City].self, from: data)
-                    print("finished reading json")
+                    print("Finished reading and decoding json file")
                     for each in decodedData {
                         let coord = Coord(lon: each.coord.lon, lat: each.coord.lat)
                         //parse to core data classes
@@ -49,15 +48,18 @@ final class CityListRepository {
                         city.coord?.lat = coord.lat
                         city.coord?.lon = coord.lon
                     }
-                    print("starting to save to core data")
-                      try context.save()
-                    print("finished saving to core data")
+                    print("Starting to save to core data")
+                    try context.save()
+                    print("Finished saving to core data, deleting json file")
+                    ///Delete the json file
+                    try FileManager.default.removeItem(at: URL(fileURLWithPath: path))
+                    print("Json file deleted")
                 } catch {
-                    print("Json file could not be read: \(error.localizedDescription)")
+                    print("Error in cityrepo: \(error.localizedDescription)")
                 }
             }
         }
-        print("ending init of city repo")
+        print("Ending initialization of city repository")
     }
 
     func getCityInfo(by string: String, completion: @escaping ([CityListRepository.City]) -> Void ) {

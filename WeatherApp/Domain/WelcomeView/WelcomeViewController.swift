@@ -52,6 +52,8 @@ final class WelcomeViewController: UIViewController {
         if !isLocationServicesEnabled() {
             viewModel.citySearchRequired()
         }
+
+        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
 
     //MARK: - IBAction

@@ -43,7 +43,7 @@
                                                             <constraint firstAttribute="width" secondItem="SFx-ea-aeg" secondAttribute="height" multiplier="1:1" id="tCn-6l-UXv"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
                                                         <rect key="frame" x="106.66666666666669" y="270.33333333333331" width="150" height="57.333333333333314"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhl-at-7z0">
