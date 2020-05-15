@@ -49,9 +49,13 @@ final class WelcomeViewController: UIViewController {
         setUI()
         setConstraints()
 
-        if !isLocationServicesEnabled() {
+        let lastCityInfo = viewModel.lastCityOnWelcomeScreen
+        if !isLocationServicesEnabled() && lastCityInfo == nil {
             viewModel.citySearchRequired()
+        } else if let lastCityInfo = lastCityInfo {
+            viewModel.weatherInfoByCityIdRequired(with: lastCityInfo)
         }
+
         ///For general core data debuging purposes
         //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
@@ -143,7 +147,7 @@ final class WelcomeViewController: UIViewController {
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
-            imageAttachment.image = UIImage(systemName: "arrow.up")
+            imageAttachment.image = UIImage(systemName: "arrow.up")?.withTintColor(AppColor.primary!)
             self.refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
             self.refreshControl.alpha = 1
             }
@@ -379,9 +383,10 @@ extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
             lockForUpwardsScroll(scrollView: scrollView)
-            if scrollView.contentOffset.y == 0 {
+            print(scrollView.contentOffset.y)
+            if scrollView.contentOffset.y == -45 {
                 let attachment = NSTextAttachment()
-                attachment.image = UIImage(systemName: "arrow.down")
+                attachment.image = UIImage(systemName: "arrow.down")?.withTintColor(AppColor.primary!)
                 refreshControl.attributedTitle = NSAttributedString(attachment: attachment)
             }
         } else if scrollView == collectionView {
