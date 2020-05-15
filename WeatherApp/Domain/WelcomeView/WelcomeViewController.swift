@@ -48,14 +48,7 @@ final class WelcomeViewController: UIViewController {
         viewModel.viewDidLoad()
         setUI()
         setConstraints()
-
-        let lastCityInfo = viewModel.lastCityOnWelcomeScreen
-        if !isLocationServicesEnabled() && lastCityInfo == nil {
-            viewModel.citySearchRequired()
-        } else if let lastCityInfo = lastCityInfo {
-            viewModel.weatherInfoByCityIdRequired(with: lastCityInfo)
-        }
-
+        setFirstScene()
         ///For general core data debuging purposes
         //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
@@ -364,6 +357,15 @@ final class WelcomeViewController: UIViewController {
         }
     }
 
+    private func setFirstScene() {
+        let lastCityInfo = viewModel.lastCityOnWelcomeScreen
+        if !isLocationServicesEnabled() && lastCityInfo == nil {
+            viewModel.citySearchRequired()
+        } else if let lastCityInfo = lastCityInfo {
+            viewModel.weatherInfoByCityIdRequired(with: lastCityInfo, saveAsFavorite: false)
+        }
+    }
+
 
     //MARK: - Components
     private let refreshControl: UIRefreshControl = {
@@ -384,7 +386,8 @@ extension WelcomeViewController: UIScrollViewDelegate {
         if scrollView == containerScrollView {
             lockForUpwardsScroll(scrollView: scrollView)
             print(scrollView.contentOffset.y)
-            if scrollView.contentOffset.y == -45 {
+            print(scrollView.contentOffset.y)
+            if scrollView.contentOffset.y > -4 {
                 let attachment = NSTextAttachment()
                 attachment.image = UIImage(systemName: "arrow.down")?.withTintColor(AppColor.primary!)
                 refreshControl.attributedTitle = NSAttributedString(attachment: attachment)

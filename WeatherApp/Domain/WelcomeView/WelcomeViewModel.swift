@@ -162,6 +162,12 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
     }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            weatherInfoByLocationRequired()
+        }
+    }
 }
 
 //MARK: - TemperatureSettingsManagerDelegate
