@@ -71,7 +71,7 @@ final class WelcomeViewController: UIViewController {
                 }
             }
             alertController.addAction(settingsAction)
-            alertController.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
             present(alertController, animated: true, completion: nil)
         }
@@ -137,15 +137,16 @@ final class WelcomeViewController: UIViewController {
     @objc func pulledToRefresh(_ sender: AnyObject) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
-        guard let id = viewModel.currentWeatherInfo?.id else { return }
-        viewModel.weatherInfoByCityIdRequired(with: id, saveAsFavorite: false)
+        if let id = viewModel.currentWeatherInfo?.id {
+            viewModel.weatherInfoByCityIdRequired(with: id, saveAsFavorite: false)
+        }
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = UIImage(systemName: "arrow.up")
             self.refreshControl.attributedTitle = NSAttributedString(attachment: imageAttachment)
             self.refreshControl.alpha = 1
-        }
+            }
         refreshControl.endRefreshing()
     }
 
