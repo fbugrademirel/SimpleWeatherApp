@@ -23,6 +23,7 @@ final class FavoritesViewModel {
 
     var favoriteCityCellViewModels: [FavoriteCityTableViewCellViewModel] = [] {
         didSet {
+            favoriteCityCellViewModels.sort { $0.cityName < $1.cityName }
             didReceivedAction?(.reload)
         }
     }
