@@ -30,6 +30,7 @@ final class WelcomeViewModel: NSObject {
 
     let settingsManager = TemperatureSettingsManager()
 
+    var lastCityOnWelcomeScreen: Int?
     private let cityRepo = CityListRepository.shared
     private let weatherRepo = WeatherRepository.shared
     private var locationManager = CLLocationManager()
@@ -63,9 +64,15 @@ final class WelcomeViewModel: NSObject {
     }
 
     func viewDidLoad() {
+
+        lastCityOnWelcomeScreen = UserDefaults.standard.object(forKey: "LastCity") as? Int
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
+        if lastCityOnWelcomeScreen == nil {
+            locationManager.requestLocation()
+        } else if let lastCity = lastCityOnWelcomeScreen {
+            weatherInfoByCityIdRequired(with: lastCity, saveAsFavorite: false)
+        }
         settingsManager.delegate = self
         let unit = TemperatureSettingsManager.TempUnit(rawValue: UserDefaults.standard.object(forKey: "Unit") as? TemperatureSettingsManager.TempUnit.RawValue ?? TemperatureSettingsManager.TempUnit.celcius.rawValue)
         settingsManager.setUnit(to: unit)
@@ -78,16 +85,21 @@ final class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
-    func weatherInfoByCityIdRequired(with id: Int, isForRefresh: Bool) {
+    func weatherInfoByCityIdRequired(with id: Int, saveAsFavorite: Bool = true) {
         updateCurrentWeatherInfo(with: .id(id))
         updateForecastWeatherInfo(with: .id(id))
-        if !isForRefresh {
+        if saveAsFavorite {
             cityRepo.saveAsFavoriteCity(with: id)
         }
     }
 
     func citySearchRequired(){
         didReceiveAction?(.presentSearchView(viewModel: SearchViewModel()))
+    }
+
+    func saveAsLastCityOnWelcomeScreen(id: Int) {
+        lastCityOnWelcomeScreen = id
+        UserDefaults.standard.set(id, forKey: "LastCity")
     }
 
     private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {

@@ -10,6 +10,7 @@ import Foundation
 
 final class ForecastCollectionViewCellViewModel {
 
+    ///Not in use for now
     enum ActionToParent {
         case toMain
     }

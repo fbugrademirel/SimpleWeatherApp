@@ -43,7 +43,7 @@
                                                             <constraint firstAttribute="width" secondItem="SFx-ea-aeg" secondAttribute="height" multiplier="1:1" id="tCn-6l-UXv"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <stackView opaque="NO" contentMode="center" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="247" verticalCompressionResistancePriority="747" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="n5w-UY-TLQ">
                                                         <rect key="frame" x="106.66666666666669" y="270.33333333333331" width="150" height="57.333333333333314"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhl-at-7z0">
@@ -154,7 +154,7 @@
                                 <rect key="frame" x="12" y="692" width="351" height="74"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a7y-Ca-pT8">
-                                        <rect key="frame" x="12" y="12" width="62" height="50"/>
+                                        <rect key="frame" x="24" y="12" width="62" height="50"/>
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="ThL-Gb-opc"/>
@@ -165,7 +165,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lNm-KA-LPf">
-                                        <rect key="frame" x="136.66666666666666" y="12" width="25" height="50"/>
+                                        <rect key="frame" x="144.33333333333334" y="12" width="25" height="50"/>
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="TPL-JF-OVd"/>
@@ -176,7 +176,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tDu-o2-CX0">
-                                        <rect key="frame" x="224" y="12" width="24.333333333333343" height="50"/>
+                                        <rect key="frame" x="228" y="12" width="24.333333333333343" height="50"/>
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="i38-yq-Thp"/>
@@ -187,18 +187,18 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aIA-FH-pOh">
-                                        <rect key="frame" x="311" y="12" width="28" height="50"/>
+                                        <rect key="frame" x="310.66666666666669" y="12" width="16.333333333333314" height="50"/>
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="ewg-OW-yNb"/>
                                         </constraints>
-                                        <state key="normal" image="dial" catalog="system"/>
+                                        <state key="normal" image="thermometer" catalog="system"/>
                                         <connections>
                                             <action selector="settingsButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aW6-KF-CyB"/>
                                         </connections>
                                     </button>
                                 </subviews>
-                                <edgeInsets key="layoutMargins" top="12" left="12" bottom="12" right="12"/>
+                                <edgeInsets key="layoutMargins" top="12" left="24" bottom="12" right="24"/>
                             </stackView>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="PXa-xk-1Ri">
                                 <rect key="frame" x="4" y="656" width="367" height="31"/>
@@ -341,9 +341,9 @@
     </scenes>
     <resources>
         <image name="arrow.up" catalog="system" width="120" height="128"/>
-        <image name="dial" catalog="system" width="128" height="106"/>
         <image name="location" catalog="system" width="128" height="115"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
+        <image name="thermometer" catalog="system" width="87" height="128"/>
         <image name="wind" catalog="system" width="128" height="103"/>
     </resources>
 </document>

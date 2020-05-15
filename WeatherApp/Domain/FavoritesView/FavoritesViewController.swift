@@ -81,6 +81,7 @@ final class FavoritesViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: FavoriteCityTableViewCell.nibName, bundle: nil), forCellReuseIdentifier: FavoriteCityTableViewCell.nibName)
         tableView.separatorInset = .zero
+        tableView.contentInset = UIEdgeInsets(top: -tableView.sectionHeaderHeight, left: 0, bottom: 0, right: 0)
     }
 
     //MARK: - Operations
@@ -105,7 +106,7 @@ extension FavoritesViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.1
+        return .leastNonzeroMagnitude
     }
 }
 

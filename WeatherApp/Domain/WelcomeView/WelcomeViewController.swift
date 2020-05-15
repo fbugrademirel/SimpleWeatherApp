@@ -52,6 +52,8 @@ final class WelcomeViewController: UIViewController {
         if !isLocationServicesEnabled() {
             viewModel.citySearchRequired()
         }
+        ///For general core data debuging purposes
+        //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
 
     //MARK: - IBAction
@@ -132,11 +134,11 @@ final class WelcomeViewController: UIViewController {
         transformCells(scrollView: collectionView)
     }
 
-    @objc func refresh(_ sender: AnyObject) {
+    @objc func pulledToRefresh(_ sender: AnyObject) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         guard let id = viewModel.currentWeatherInfo?.id else { return }
-        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: true)
+        viewModel.weatherInfoByCityIdRequired(with: id, saveAsFavorite: false)
         refreshControl.alpha = 0
         UIView.animate(withDuration: 1) {
             let imageAttachment = NSTextAttachment()
@@ -175,16 +177,16 @@ final class WelcomeViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
 
-        //segmentedUnitController
+        //SegmentedUnitController
         segmentedUnitSelector.alpha = 0
         segmentedUnitSelector.isUserInteractionEnabled = false
         blockView.isUserInteractionEnabled = false
-        //BlokingView
 
+        //BlokingView
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
         blockView.addGestureRecognizer(tapRecognizer)
 
-        // Slider
+        //Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
@@ -194,7 +196,7 @@ final class WelcomeViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(changeThumbLocation(sender:)))
         dayForecastSlider.addGestureRecognizer(gesture)
 
-        // Labels
+        //Labels
         cityNameLabel.textColor = AppColor.primary
         forecastTimeLabel.textColor = AppColor.primary
         temperatureLabel.textColor = AppColor.primary
@@ -203,16 +205,16 @@ final class WelcomeViewController: UIViewController {
         temperatureUnitIndicator.textColor = AppColor.primary
         windSpeedUnitIndicator.textColor = AppColor.primary
 
-        // Buttons
+        //Buttons
         for each in buttons {
             each.tintColor = AppColor.primary
             each.layer.cornerRadius = 25
             each.backgroundColor = .systemBackground
         }
 
-        //scroll view
+        //Container Scroll view
         containerScrollView.delegate = self
-        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(pulledToRefresh(_:)), for: .valueChanged)
         containerScrollView.addSubview(refreshControl)
 
         // Images
@@ -224,7 +226,7 @@ final class WelcomeViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
 
         // Bottom StackView
-        bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 24, bottom: 6, right: 24)
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
@@ -256,6 +258,7 @@ final class WelcomeViewController: UIViewController {
     }
 
     private func updateUIforCurrentWeatherLabels(with model: WelcomeViewModel.CurrentWeatherModel) {
+        viewModel.saveAsLastCityOnWelcomeScreen(id: model.id)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                 self.infoStackView.alpha = 0
@@ -461,14 +464,14 @@ extension WelcomeViewController: UICollectionViewDataSource {
 
 extension WelcomeViewController: FavoritesViewControllerDelegate {
     func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: cityID, isForRefresh: false)
+        viewModel.weatherInfoByCityIdRequired(with: cityID)
     }
 }
 
 //MARK: - SearchVC Delegate
 extension WelcomeViewController: SearchViewControllerDelegate {
     func didSelectCity(_ id: Int) {
-        viewModel.weatherInfoByCityIdRequired(with: id, isForRefresh: false)
+        viewModel.weatherInfoByCityIdRequired(with: id)
     }
 }
 
