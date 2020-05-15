@@ -177,16 +177,16 @@ final class WelcomeViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
 
-        //segmentedUnitController
+        //SegmentedUnitController
         segmentedUnitSelector.alpha = 0
         segmentedUnitSelector.isUserInteractionEnabled = false
         blockView.isUserInteractionEnabled = false
-        //BlokingView
 
+        //BlokingView
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
         blockView.addGestureRecognizer(tapRecognizer)
 
-        // Slider
+        //Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
@@ -196,7 +196,7 @@ final class WelcomeViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(changeThumbLocation(sender:)))
         dayForecastSlider.addGestureRecognizer(gesture)
 
-        // Labels
+        //Labels
         cityNameLabel.textColor = AppColor.primary
         forecastTimeLabel.textColor = AppColor.primary
         temperatureLabel.textColor = AppColor.primary
@@ -205,14 +205,14 @@ final class WelcomeViewController: UIViewController {
         temperatureUnitIndicator.textColor = AppColor.primary
         windSpeedUnitIndicator.textColor = AppColor.primary
 
-        // Buttons
+        //Buttons
         for each in buttons {
             each.tintColor = AppColor.primary
             each.layer.cornerRadius = 25
             each.backgroundColor = .systemBackground
         }
 
-        //scroll view
+        //Container Scroll view
         containerScrollView.delegate = self
         refreshControl.addTarget(self, action: #selector(pulledToRefresh(_:)), for: .valueChanged)
         containerScrollView.addSubview(refreshControl)

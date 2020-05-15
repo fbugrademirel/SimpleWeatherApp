@@ -85,8 +85,6 @@ final class WelcomeViewModel: NSObject {
         locationManager.requestLocation()
     }
 
-    /// Argument of is
-
     func weatherInfoByCityIdRequired(with id: Int, saveAsFavorite: Bool = true) {
         updateCurrentWeatherInfo(with: .id(id))
         updateForecastWeatherInfo(with: .id(id))
