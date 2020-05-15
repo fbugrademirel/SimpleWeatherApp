@@ -52,8 +52,8 @@ final class WelcomeViewController: UIViewController {
         if !isLocationServicesEnabled() {
             viewModel.citySearchRequired()
         }
-
-        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+        ///For general core data debuging purposes
+        //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
 
     //MARK: - IBAction
@@ -226,7 +226,7 @@ final class WelcomeViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
 
         // Bottom StackView
-        bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 24, bottom: 6, right: 24)
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
