@@ -40,9 +40,9 @@ final class TemperatureSettingsManager {
         }
     }
 
-    func setUnit(to: TempUnit?) {
-        if to != nil {
-            currentSetting = to
+    func setUnit(to unit: TempUnit?) {
+        if unit != nil {
+            currentSetting = unit
         } else {
             currentSetting = .celcius
         }

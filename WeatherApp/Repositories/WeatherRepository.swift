@@ -25,8 +25,6 @@ final class WeatherRepository {
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
 
-      //  print("Current Weathers: \(currentWeathers)")
-
         if !currentWeathers.isEmpty {
             switch locationInformation {
             case .id(let id):
@@ -102,8 +100,6 @@ final class WeatherRepository {
 
         var isOutOfDate: Bool = false
         var isNotFound: Bool = false
-
-//        print("Current Forecasts: \(currentForecasts)")
 
         if !currentForecasts.isEmpty {
             switch locationInformation {

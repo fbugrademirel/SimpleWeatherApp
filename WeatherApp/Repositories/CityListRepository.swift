@@ -136,8 +136,9 @@ final class CityListRepository {
     }
 }
 
+//MARK: - Extension
 extension CityListRepository {
-
+    
     struct City: Decodable {
         let id: Int
         let name: String

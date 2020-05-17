@@ -26,7 +26,7 @@ final class FavoritesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.didReceivedAction = { [ weak self ] action in
+        viewModel.didReceivedAction = { [weak self] action in
             self?.handle(action: action)
         }
         viewModel.fetchFavoriteCityWeathers()
@@ -71,7 +71,6 @@ final class FavoritesViewController: UIViewController {
         let rightButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
         rightButton.tintColor = AppColor.primary
         navigationItem.rightBarButtonItem = rightButton
-
         let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
         leftButton.tintColor = AppColor.primary
         navigationItem.leftBarButtonItem = leftButton

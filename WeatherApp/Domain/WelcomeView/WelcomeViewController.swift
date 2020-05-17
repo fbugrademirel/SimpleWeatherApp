@@ -6,8 +6,6 @@
 //  Copyright © 2020 F. Bugra Demirel. All rights reserved.
 //
 
-///Users/Bugra/Library/Developer/CoreSimulator/Devices/49E41002-2BDB-4A37-BCB8-DCF39045B01C/data/Containers/Data/Application/664D00F0-B7B5-468D-9E13-7DC6B8CC79F9/Library/Application Support
-
 import UIKit
 import CoreLocation
 
@@ -33,7 +31,7 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var dayIndicator: UILabel!
     @IBOutlet private var segmentedUnitSelector: UISegmentedControl!
     @IBOutlet private var blockView: UIView!
-    @IBOutlet weak var locationButton: ActivityIndicatorButton!
+    @IBOutlet private var locationButton: ActivityIndicatorButton!
 
     //MARK: - Properties
     var viewModel: WelcomeViewModel!
@@ -51,7 +49,7 @@ final class WelcomeViewController: UIViewController {
         setConstraints()
         setFirstScene()
         ///For general core data debuging purposes
-        //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+        ///print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
 
     //MARK: - IBAction
@@ -178,16 +176,16 @@ final class WelcomeViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
 
-        // SegmentedUnitController
+        // segmentedUnitSelector
         segmentedUnitSelector.alpha = 0
         segmentedUnitSelector.isUserInteractionEnabled = false
         blockView.isUserInteractionEnabled = false
 
-        // BlokingView
+        // blockView
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
         blockView.addGestureRecognizer(tapRecognizer)
 
-        // Slider
+        // dayForecastSlider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
@@ -212,7 +210,7 @@ final class WelcomeViewController: UIViewController {
             each.backgroundColor = .systemBackground
         }
 
-        // Container ScrollView
+        // containerScrollView
         containerScrollView.delegate = self
         refreshControl.addTarget(self, action: #selector(pulledToRefresh(_:)), for: .valueChanged)
         containerScrollView.addSubview(refreshControl)
@@ -222,15 +220,15 @@ final class WelcomeViewController: UIViewController {
         windDirection.tintColor = AppColor.primary
         windImage.tintColor = AppColor.primary
 
-        // Nav.Bar
+        // Nav.Bar.
         navigationController?.navigationBar.isHidden = true
 
-        // Bottom StackView
+        // bottomButtonsStackView
         bottomButtonsStackView.layoutMargins = UIEdgeInsets(top: 6, left: 24, bottom: 6, right: 24)
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
-        // Forecast CollectionView
+        // collectionView
         collectionView.layer.cornerRadius = 30
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.backgroundColor = AppColor.primary
@@ -251,21 +249,19 @@ final class WelcomeViewController: UIViewController {
     }
 
     //MARK: - Operations
-    private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
+    private func setTempLabel(to unit: TemperatureSettingsManager.TempUnit) {
         if let text = temperatureLabel.text {
-            temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: to)
+            temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: unit)
         }
     }
 
     private func setActivityIndicator(with: WelcomeViewModel.ActivityIndicatorSetting) {
         switch with {
         case .start:
-            //loadingSpinner.startAnimating()
             DispatchQueue.main.async {
                 self.locationButton.startActivity()
             }
         case .stop:
-            //loadingSpinner.stopAnimating()
             DispatchQueue.main.async {
                 self.locationButton.stopActivity()
             }
@@ -384,7 +380,7 @@ final class WelcomeViewController: UIViewController {
     }
 
 
-    //MARK: - Components
+    //MARK: - UI Components
     private let refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         let imageAttachment = NSTextAttachment()
@@ -485,7 +481,6 @@ extension WelcomeViewController: UICollectionViewDataSource {
 }
 
 //MARK: - FavoriteCityVC Delegate
-
 extension WelcomeViewController: FavoritesViewControllerDelegate {
     func didSelectCity(_ favoriteViewController: FavoritesViewController, cityID: Int) {
         viewModel.weatherInfoByCityIdRequired(with: cityID)

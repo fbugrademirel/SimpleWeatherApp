@@ -119,11 +119,19 @@
 			path = CityTableView;
 			sourceTree = "<group>";
 		};
+		1329DAFF2471D3C300575988 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				132DB60C2471365600D15307 /* ActivityIndicatorButton.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		135C452624621B0700C727ED /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				1329DAFF2471D3C300575988 /* UI */,
 				135C452724621B2700C727ED /* AppColor.swift */,
-				132DB60C2471365600D15307 /* ActivityIndicatorButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
