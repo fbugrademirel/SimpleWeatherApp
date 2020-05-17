@@ -23,7 +23,7 @@ class ActivityIndicatorButton: UIButton {
     }
 
     private func setActivityIndicator() {
-        ai.isHidden = false
+        ai.isHidden = true
         ai.alpha = 0
         ai.tintColor = .systemBackground
         ai.isUserInteractionEnabled = false
@@ -34,7 +34,7 @@ class ActivityIndicatorButton: UIButton {
             ai.centerYAnchor.constraint(equalTo: self.centerYAnchor)])
     }
 
-    func startActivity() {
+     func startActivity() {
         UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut, animations: {
             self.imageView?.alpha = 0
             self.titleLabel?.alpha = 0

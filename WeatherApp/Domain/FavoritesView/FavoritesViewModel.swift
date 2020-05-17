@@ -71,6 +71,7 @@ final class FavoritesViewModel {
     }
 }
 
+//MARK: - Extension
 extension FavoritesViewModel {
     struct FavoriteCityModel {
         let id: Int

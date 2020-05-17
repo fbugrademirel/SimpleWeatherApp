@@ -26,7 +26,7 @@ final class SearchViewModel {
 
     var didReceiveAction: ((Action)->())?
 
-    // FIXME: - For future use
+    // TODO: - For future use
     func handle(_ action: CityTableViewCellViewModel.Action) {
         switch action {
         case .select:
@@ -37,7 +37,7 @@ final class SearchViewModel {
     func cityListRequired(for string: String) {
         cityRepo.getCityInfo(by: string) { [weak self] cities in
             self?.cityList = cities
-            let cityCellviewModels = cities.map { city -> CityTableViewCellViewModel in //cities.sorted(by: {$1.name > $0.name})
+            let cityCellviewModels = cities.map { city -> CityTableViewCellViewModel in
                 let viewModel = CityTableViewCellViewModel(city: city, searchString: string)
                 viewModel.didReceiveAction = { [weak self] action in
                     self?.handle(action)

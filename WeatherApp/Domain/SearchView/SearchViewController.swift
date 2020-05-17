@@ -13,7 +13,7 @@ protocol SearchViewControllerDelegate: class {
 }
 
 final class SearchViewController: UIViewController {
-
+    
     //MARK: - IBOutlet
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var searchBar: UISearchBar!
@@ -49,17 +49,19 @@ final class SearchViewController: UIViewController {
     //MARK: - UI
     private func setUI() {
 
+        // SearchBar
         searchBar.tintColor = AppColor.primary
+        searchBar.delegate = self
 
+        // TableView
         tableView.delegate = self
         tableView.dataSource = self
-        searchBar.delegate = self
         tableView.register(UINib(nibName: CityTableViewCell.nibName, bundle: nil), forCellReuseIdentifier: CityTableViewCell.nibName)
         tableView.separatorInset = .zero
     }
 }
-//MARK: - SearchBar Delegate
 
+//MARK: - SearchBar Delegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
@@ -85,7 +87,6 @@ extension SearchViewController: UISearchBarDelegate {
 }
 
 //MARK: - TableView Delegate
-
 extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.didSelectCity(viewModel.cityTableViewCellModels[indexPath.row].city.id)
@@ -99,7 +100,6 @@ extension SearchViewController: UITableViewDelegate {
 
 
 //MARK: - TableView DataSource
-
 extension SearchViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -122,9 +122,7 @@ extension SearchViewController: UITableViewDataSource {
     }
 }
 
-
 //MARK: - Storyboard Instantiable
-
 extension SearchViewController: StoryboardInstantiable {
     static var storyboardName: String {
         return "SearchView"

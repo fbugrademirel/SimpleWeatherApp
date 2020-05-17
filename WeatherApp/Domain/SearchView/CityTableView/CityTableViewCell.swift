@@ -11,15 +11,15 @@ import UIKit
 final class CityTableViewCell: UITableViewCell {
 
     static let nibName = "CityTableViewCell"
-    
+
+    @IBOutlet private var cityName: UILabel!
+    @IBOutlet private var country: UILabel!
+
     var viewModel: CityTableViewCellViewModel! {
         didSet {
             configure()
         }
     }
-
-    @IBOutlet private var cityName: UILabel!
-    @IBOutlet private var country: UILabel!
 
     override func prepareForReuse() {
         cityName.attributedText = nil
@@ -32,7 +32,6 @@ final class CityTableViewCell: UITableViewCell {
         if let boldPart = viewModel.searchString {
             fullString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 17), range: NSRange(location: 0, length: boldPart.count))
         }
-
         cityName.attributedText = fullString
         country.text = viewModel.city.country
     }

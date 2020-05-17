@@ -29,6 +29,7 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
+
     let settingsManager = TemperatureSettingsManager()
     var lastCityOnWelcomeScreen: Int?
     private let cityRepo = CityListRepository.shared
@@ -38,6 +39,7 @@ final class WelcomeViewModel: NSObject {
         lm.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         return lm
     }()
+
     private var location: CLLocation? = nil {
         didSet {
             if let location = location {
@@ -46,6 +48,7 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
+
     var currentWeatherInfo: CurrentWeatherModel? = nil {
         didSet {
             if let weatherInfo = currentWeatherInfo {
@@ -54,29 +57,34 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
+
     var forecastColletionViewCellModels: [ForecastCollectionViewCellViewModel] = [] {
         didSet {
             didReceiveAction?(.reloadCollectionView)
         }
     }
+
     var isUpdatingWeather: Bool = false {
         didSet {
             if isUpdatingWeather {
                 didReceiveAction?(.setActivityIndicator(to: .start))
             } else {
-                didReceiveAction?(.setActivityIndicator(to: .stop))
+               didReceiveAction?(.setActivityIndicator(to: .stop))
             }
         }
     }
+
     var didReceiveAction: ((Action)-> Void)?
 
     //MARK: - Handle
+    //TODO: - For future use
     func handle(action: ForecastCollectionViewCellViewModel.ActionToParent) {
         switch action {
         case .toMain:
-            print()
+            print("Handled by WelcomeViewModel")
         }
     }
+
     //MARK: - Operations
     func viewDidLoad() {
         lastCityOnWelcomeScreen = UserDefaults.standard.object(forKey: "LastCity") as? Int
@@ -118,7 +126,6 @@ final class WelcomeViewModel: NSObject {
     }
 
     private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
-        isUpdatingWeather = true
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
@@ -159,11 +166,6 @@ final class WelcomeViewModel: NSObject {
             self.forecastColletionViewCellModels = forecastCellViewModels
         }
     }
-    private func setCellViewModels() {
-        forecastColletionViewCellModels.forEach { (model) in
-            
-        }
-    }
 }
 
 //MARK: - Location Manager
@@ -187,7 +189,6 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
 }
 
 //MARK: - TemperatureSettingsManagerDelegate
-
 extension WelcomeViewModel: TemperatureSettingsManagerDelegate {
     func tempUnitDidSet(_ temperatureSettingsManager: TemperatureSettingsManager, unit: TemperatureSettingsManager.TempUnit) {
         tempUnit = unit
