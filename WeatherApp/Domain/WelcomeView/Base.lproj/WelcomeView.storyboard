@@ -164,7 +164,7 @@
                                             <action selector="favoritesButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kQK-Lk-W3O"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lNm-KA-LPf">
+                                    <button opaque="NO" tag="99" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lNm-KA-LPf" customClass="ActivityIndicatorButton" customModule="WeatherApp" customModuleProvider="target">
                                         <rect key="frame" x="144.33333333333334" y="12" width="25" height="50"/>
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -319,6 +319,7 @@
                         <outlet property="dayIndicator" destination="azp-yG-u7X" id="A6f-hM-MSd"/>
                         <outlet property="forecastTimeLabel" destination="xjg-w0-Ie8" id="Xni-dq-x9P"/>
                         <outlet property="infoStackView" destination="Oey-b3-glE" id="mq7-ea-aD8"/>
+                        <outlet property="locationButton" destination="lNm-KA-LPf" id="zvX-z5-J7n"/>
                         <outlet property="segmentedUnitSelector" destination="BGS-bX-SAl" id="Ne5-pA-1bt"/>
                         <outlet property="temperatureLabel" destination="i4h-jA-52r" id="vHS-I7-C0E"/>
                         <outlet property="temperatureUnitIndicator" destination="yKU-VP-Gdk" id="cFt-MO-UlD"/>

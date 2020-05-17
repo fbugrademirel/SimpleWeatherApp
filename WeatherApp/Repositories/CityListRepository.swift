@@ -18,6 +18,7 @@ final class CityListRepository {
     static let shared = CityListRepository()
 
     init() {
+        print("Initializing city repository")
         favoriteCities = fetchFavoriteCities()
         var isEmpty: Bool {
             do {
@@ -29,8 +30,8 @@ final class CityListRepository {
             }
         }
         if isEmpty {
-            print("Initializing city repository")
-            if let path = Bundle.main.path(forResource: "citylist", ofType: "json") {
+            print("Preparing Core-Data for the first time use \(Date().timeIntervalSinceReferenceDate)")
+            if let path = Bundle.main.path(forResource: "city", ofType: "json") {
                 do {
                     let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
                     print("Starting to read json of city names")
@@ -50,7 +51,7 @@ final class CityListRepository {
                     }
                     print("Starting to save to core data")
                     try context.save()
-                    print("Finished saving to core data, deleting json file")
+                    print("Finished saving to core data, deleting json file \(Date().timeIntervalSinceReferenceDate)")
                     ///Delete the json file
                     try FileManager.default.removeItem(at: URL(fileURLWithPath: path))
                     print("Json file deleted")

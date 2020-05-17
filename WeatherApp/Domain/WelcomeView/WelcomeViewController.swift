@@ -33,6 +33,7 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var dayIndicator: UILabel!
     @IBOutlet private var segmentedUnitSelector: UISegmentedControl!
     @IBOutlet private var blockView: UIView!
+    @IBOutlet weak var locationButton: ActivityIndicatorButton!
 
     //MARK: - Properties
     var viewModel: WelcomeViewModel!
@@ -71,9 +72,9 @@ final class WelcomeViewController: UIViewController {
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
             present(alertController, animated: true, completion: nil)
+        } else {
+            viewModel.weatherInfoByLocationRequired()
         }
-
-        viewModel.weatherInfoByLocationRequired()
     }
 
     @IBAction func searchButtonPressed(_ sender: UIButton) {
@@ -169,22 +170,24 @@ final class WelcomeViewController: UIViewController {
             setTempLabel(to: tempUnit)
         case .setUnitSegmentController(to: let tempUnit):
             setUnitSegmentController(to: tempUnit)
+        case .setActivityIndicator(to: let setting):
+            setActivityIndicator(with: setting)
         }
     }
 
     //MARK: - UI
     private func setUI() {
 
-        //SegmentedUnitController
+        // SegmentedUnitController
         segmentedUnitSelector.alpha = 0
         segmentedUnitSelector.isUserInteractionEnabled = false
         blockView.isUserInteractionEnabled = false
 
-        //BlokingView
+        // BlokingView
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(blockViewTapped))
         blockView.addGestureRecognizer(tapRecognizer)
 
-        //Slider
+        // Slider
         let thumbImage = UIImage(systemName: "circle.fill")!.withRenderingMode(.alwaysTemplate)
         let thumgImageForSliding = UIImage(systemName: "arrowtriangle.up.fill")!.withRenderingMode(.alwaysTemplate)
         dayForecastSlider.setThumbImage(thumbImage, for: .normal)
@@ -194,7 +197,7 @@ final class WelcomeViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(changeThumbLocation(sender:)))
         dayForecastSlider.addGestureRecognizer(gesture)
 
-        //Labels
+        // Labels
         cityNameLabel.textColor = AppColor.primary
         forecastTimeLabel.textColor = AppColor.primary
         temperatureLabel.textColor = AppColor.primary
@@ -203,14 +206,13 @@ final class WelcomeViewController: UIViewController {
         temperatureUnitIndicator.textColor = AppColor.primary
         windSpeedUnitIndicator.textColor = AppColor.primary
 
-        //Buttons
+        // Buttons
         for each in buttons {
             each.tintColor = AppColor.primary
-            each.layer.cornerRadius = 25
             each.backgroundColor = .systemBackground
         }
 
-        //Container Scroll view
+        // Container ScrollView
         containerScrollView.delegate = self
         refreshControl.addTarget(self, action: #selector(pulledToRefresh(_:)), for: .valueChanged)
         containerScrollView.addSubview(refreshControl)
@@ -228,7 +230,7 @@ final class WelcomeViewController: UIViewController {
         bottomButtonsStackView.addBackground(color: .systemBackground)
         bottomButtonsStackView.subviews.first?.layer.cornerRadius = 30
 
-        //CollectionView
+        // Forecast CollectionView
         collectionView.layer.cornerRadius = 30
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.backgroundColor = AppColor.primary
@@ -244,14 +246,29 @@ final class WelcomeViewController: UIViewController {
     //MARK: - Constraints
     private func setConstraints() {
         NSLayoutConstraint.activate([
-              refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-              refreshControl.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 50)])
+            refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            refreshControl.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 50)])
     }
 
     //MARK: - Operations
     private func setTempLabel(to: TemperatureSettingsManager.TempUnit) {
         if let text = temperatureLabel.text {
             temperatureLabel.text = viewModel.settingsManager.convertTemp(temp: text ,to: to)
+        }
+    }
+
+    private func setActivityIndicator(with: WelcomeViewModel.ActivityIndicatorSetting) {
+        switch with {
+        case .start:
+            //loadingSpinner.startAnimating()
+            DispatchQueue.main.async {
+                self.locationButton.startActivity()
+            }
+        case .stop:
+            //loadingSpinner.stopAnimating()
+            DispatchQueue.main.async {
+                self.locationButton.stopActivity()
+            }
         }
     }
 
@@ -385,8 +402,6 @@ extension WelcomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == containerScrollView {
             lockForUpwardsScroll(scrollView: scrollView)
-            print(scrollView.contentOffset.y)
-            print(scrollView.contentOffset.y)
             if scrollView.contentOffset.y > -4 {
                 let attachment = NSTextAttachment()
                 attachment.image = UIImage(systemName: "arrow.down")?.withTintColor(AppColor.primary!)
