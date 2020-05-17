@@ -33,7 +33,7 @@ final class WelcomeViewController: UIViewController {
     @IBOutlet private var dayIndicator: UILabel!
     @IBOutlet private var segmentedUnitSelector: UISegmentedControl!
     @IBOutlet private var blockView: UIView!
-    @IBOutlet weak var locationButton: ActivityIndicatorButton!
+    @IBOutlet private var locationButton: ActivityIndicatorButton!
 
     //MARK: - Properties
     var viewModel: WelcomeViewModel!
