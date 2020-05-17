@@ -17,8 +17,10 @@ final class WelcomeViewModel: NSObject {
         case presentSearchView(viewModel: SearchViewModel)
         case setTempLabel(to: TemperatureSettingsManager.TempUnit)
         case setUnitSegmentController(to: TemperatureSettingsManager.TempUnit)
+        case setActivityIndicator(to: ActivityIndicatorSetting)
     }
 
+    //MARK: - Properties
     var tempUnit: TemperatureSettingsManager.TempUnit = .celcius {
         didSet {
             didReceiveAction?(.setTempLabel(to: tempUnit))
@@ -27,13 +29,15 @@ final class WelcomeViewModel: NSObject {
             }
         }
     }
-
     let settingsManager = TemperatureSettingsManager()
-
     var lastCityOnWelcomeScreen: Int?
     private let cityRepo = CityListRepository.shared
     private let weatherRepo = WeatherRepository.shared
-    private var locationManager = CLLocationManager()
+    private var locationManager: CLLocationManager = {
+        let lm = CLLocationManager()
+        lm.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        return lm
+    }()
     private var location: CLLocation? = nil {
         didSet {
             if let location = location {
@@ -45,6 +49,7 @@ final class WelcomeViewModel: NSObject {
     var currentWeatherInfo: CurrentWeatherModel? = nil {
         didSet {
             if let weatherInfo = currentWeatherInfo {
+                isUpdatingWeather = false
                 didReceiveAction?(.updateUI(with: (weatherInfo)))
             }
         }
@@ -54,17 +59,26 @@ final class WelcomeViewModel: NSObject {
             didReceiveAction?(.reloadCollectionView)
         }
     }
+    var isUpdatingWeather: Bool = false {
+        didSet {
+            if isUpdatingWeather {
+                didReceiveAction?(.setActivityIndicator(to: .start))
+            } else {
+                didReceiveAction?(.setActivityIndicator(to: .stop))
+            }
+        }
+    }
     var didReceiveAction: ((Action)-> Void)?
 
+    //MARK: - Handle
     func handle(action: ForecastCollectionViewCellViewModel.ActionToParent) {
         switch action {
         case .toMain:
             print()
         }
     }
-
+    //MARK: - Operations
     func viewDidLoad() {
-
         lastCityOnWelcomeScreen = UserDefaults.standard.object(forKey: "LastCity") as? Int
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -82,6 +96,7 @@ final class WelcomeViewModel: NSObject {
     }
 
     func weatherInfoByLocationRequired() {
+        isUpdatingWeather = true
         locationManager.requestLocation()
     }
 
@@ -103,6 +118,7 @@ final class WelcomeViewModel: NSObject {
     }
 
     private func updateCurrentWeatherInfo(with requestInfo: WeatherRepository.LocationInformation) {
+        isUpdatingWeather = true
         weatherRepo.getCurrentWeatherInfo(with: requestInfo) { [weak self] data in
             guard let self = self else { return }
             if let data = data {
@@ -162,6 +178,12 @@ extension WelcomeViewModel: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
     }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            weatherInfoByLocationRequired()
+        }
+    }
 }
 
 //MARK: - TemperatureSettingsManagerDelegate
@@ -174,6 +196,11 @@ extension WelcomeViewModel: TemperatureSettingsManagerDelegate {
 
 //MARK: - Weather Models
 extension WelcomeViewModel {
+
+    enum ActivityIndicatorSetting {
+        case start
+        case stop
+    }
 
     enum ModelType {
         case currentWeather (CurrentWeatherModel)
