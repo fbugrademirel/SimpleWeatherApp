@@ -48,8 +48,6 @@ final class WelcomeViewController: UIViewController {
         setUI()
         setConstraints()
         setFirstScene()
-        ///For general core data debuging purposes
-        ///print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     }
 
     //MARK: - IBAction
